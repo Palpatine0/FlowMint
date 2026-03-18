@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { Transaction } from "./types";
+import type { Transaction, DashboardStats } from "./types";
 import {
   calculateTotals,
   getTransactions,
@@ -12,7 +12,14 @@ import { AddTransactionModal } from "./components/ui/AddTransactionModal";
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [stats, setStats] = useState({ income: 0, expenses: 0, balance: 0 });
+  const [stats, setStats] = useState<DashboardStats>({
+    income: 0,
+    expenses: 0,
+    balance: 0,
+    incomeChange: 0,
+    expensesChange: 0,
+    balanceChange: 0,
+  });
   const handleDeleteTransaction = async (id: string) => {
     const updatedTransactions = transactions.filter((tx) => tx.id !== id);
     setTransactions(updatedTransactions);

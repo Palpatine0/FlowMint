@@ -1,10 +1,10 @@
 import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
 import { StatCard } from "../components/ui/StatCard";
 import { TransactionList } from "../components/ui/TransactionList";
-import type { Transaction } from "../types";
+import type { Transaction, DashboardStats } from "../types";
 
 interface DashboardProps {
-  stats: { income: number; expenses: number; balance: number };
+  stats: DashboardStats;
   transactions: Transaction[];
   onDeleteTransaction: (id: string) => void;
 }
@@ -20,7 +20,7 @@ export function Dashboard({
         <StatCard
           title="Total Balance"
           amount={`$${stats.balance.toLocaleString()}`}
-          change="+2.5%"
+          change={`${stats.balanceChange.toFixed(1)}%`}
           isPositive={stats.balance >= 0}
           icon={Wallet}
           iconColor="bg-blue-600"
@@ -28,7 +28,7 @@ export function Dashboard({
         <StatCard
           title="Monthly Income"
           amount={`$${stats.income.toLocaleString()}`}
-          change="+12.1%"
+          change={`${stats.incomeChange.toFixed(1)}%`}
           isPositive={true}
           icon={TrendingUp}
           iconColor="bg-emerald-600"
@@ -36,7 +36,7 @@ export function Dashboard({
         <StatCard
           title="Monthly Expenses"
           amount={`$${stats.expenses.toLocaleString()}`}
-          change="-4.3%"
+          change={`${stats.expensesChange.toFixed(1)}%`}
           isPositive={false}
           icon={TrendingDown}
           iconColor="bg-rose-600"

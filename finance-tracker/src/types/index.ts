@@ -17,8 +17,10 @@ export interface Category {
 }
 
 export interface DashboardStats {
-  totalBalance: number;
-  totalIncome: number;
-  totalExpenses: number;
-  changePercentage: number;
+  balance: number;
+  income: number;
+  expenses: number;
+  balanceChange: number;
+  incomeChange: number;
+  expensesChange: number;
 }
