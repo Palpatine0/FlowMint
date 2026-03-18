@@ -2,6 +2,7 @@ import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
 import { StatCard } from "../components/ui/StatCard";
 import { TransactionList } from "../components/ui/TransactionList";
 import type { Transaction, DashboardStats } from "../types";
+import { useState } from "react";
 
 interface DashboardProps {
   stats: DashboardStats;
@@ -14,6 +15,15 @@ export function Dashboard({
   transactions,
   onDeleteTransaction,
 }: DashboardProps) {
+  const [displayLimit, setDisplayLimit] = useState(5);
+
+  const sortedTransactions = [...transactions].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+
+  const visibleTransactions = sortedTransactions.slice(0, displayLimit);
+  const hasMore = displayLimit < sortedTransactions.length;
+
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -44,15 +54,27 @@ export function Dashboard({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-4">
           <TransactionList
-            transactions={transactions.slice(0, 5)}
+            transactions={visibleTransactions}
             onDelete={onDeleteTransaction}
           />
+          {hasMore && (
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => setDisplayLimit((prev) => prev + 5)}
+                className="text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 px-6 py-2 rounded-full transition-colors"
+              >
+                Load More
+              </button>
+            </div>
+          )}
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 h-full min-h-[300px] flex items-center justify-center text-slate-400 shadow-sm">
-          Chart View
+        <div className="lg:col-span-1">
+          <div className="sticky top-8 space-y-6">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm h-[350px]"></div>
+          </div>
         </div>
       </div>
     </>
