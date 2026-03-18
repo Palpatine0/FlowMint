@@ -8,30 +8,45 @@ interface Props {
   onAdd: (transaction: Transaction) => void;
 }
 
+const PRESET_CATEGORIES = [
+  "Rent",
+  "Food",
+  "Clothes",
+  "Transport",
+  "Utilities",
+  "Entertainment",
+  "Other",
+];
+
 export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState(PRESET_CATEGORIES[0]);
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [type, setType] = useState<TransactionType>("expense");
+  const [customCategory, setCustomCategory] = useState("");
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newTransaction: Transaction = {
-      id: crypto.randomUUID(), // Standard web API for unique IDs
+    const finalCategory = category === "Other" ? customCategory : category;
+
+    onAdd({
+      id: crypto.randomUUID(),
       amount: parseFloat(amount),
       description,
       type,
-      date: new Date().toISOString(),
-      category: "General", // You can expand this later
-    };
-
-    onAdd(newTransaction);
+      date: new Date(date).toISOString(),
+      category: finalCategory || "Uncategorized",
+    });
     onClose();
-    // Reset form
     setAmount("");
     setDescription("");
+    setCategory(PRESET_CATEGORIES[0]);
+    setCustomCategory("");
+    setDate(new Date().toISOString().split("T")[0]);
   };
 
   return (
@@ -74,7 +89,50 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
               placeholder="e.g. Monthly Rent"
             />
           </div>
-
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Date
+              </label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="w-full px-4 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Category
+              </label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full px-4 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              >
+                {PRESET_CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {category === "Other" && (
+              <div className="animate-in fade-in slide-in-from-top-1 duration-200">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Custom Category
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Gym, Subscriptions..."
+                  value={customCategory}
+                  onChange={(e) => setCustomCategory(e.target.value)}
+                  className="w-full px-4 py-2 border border-blue-200 bg-blue-50/30 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+            )}
+          </div>
           <div className="flex gap-4">
             <button
               type="button"
