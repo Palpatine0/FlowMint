@@ -32,7 +32,7 @@ export default function App() {
   }, []);
 
   const handleTransaction = async (newTx: Transaction) => {
-    const updatedTransactions = [...transactions, newTx];
+    const updatedTransactions = [newTx, ...transactions];
     await saveTransaction(newTx);
     setTransactions(updatedTransactions);
     const newStats = await calculateTotals(updatedTransactions);
