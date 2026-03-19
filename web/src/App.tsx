@@ -6,6 +6,7 @@ import type {
   FilterRange,
   Transaction,
   CustomDateRange,
+  UserProfile,
 } from "./types";
 import {
   calculateTotals,
@@ -13,11 +14,13 @@ import {
   saveTransactions,
   filterTransactions,
 } from "./services/transactionService";
+import { getUserProfile, saveUserProfile } from "./services/userService";
 
 import { MainLayout } from "./components/layout/MainLayout";
 import { Dashboard } from "./pages/Dashboard";
 import { Accounts } from "./pages/Accounts";
 import { Budgets } from "./pages/Budgets";
+import { Settings } from "./pages/Settings";
 import { AddTransactionModal } from "./components/ui/AddTransactionModal";
 
 export default function App() {
@@ -31,6 +34,7 @@ export default function App() {
     to: "",
   });
   const [toast, setToast] = useState<{ message: string; severity: "success" | "error" } | null>(null);
+  const [profile, setProfile] = useState<UserProfile>(getUserProfile);
 
   const filteredTransactions = useMemo(() => {
     return filterTransactions(transactions, activeRange, customDates);
@@ -39,6 +43,14 @@ export default function App() {
   const stats = useMemo(() => {
     return calculateTotals(transactions, filteredTransactions, activeRange);
   }, [transactions, filteredTransactions, activeRange]);
+
+  const resolvedDark = profile.theme === "system"
+    ? window.matchMedia("(prefers-color-scheme: dark)").matches
+    : profile.theme === "dark";
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", resolvedDark);
+  }, [resolvedDark]);
 
   useEffect(() => {
     const init = async () => {
@@ -75,8 +87,21 @@ export default function App() {
     setCustomDates((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleSaveProfile = (updated: UserProfile) => {
+    saveUserProfile(updated);
+    setProfile(updated);
+    setToast({ message: "Profile saved!", severity: "success" });
+  };
+
+  const handleToggleDarkMode = () => {
+    const next: UserProfile["theme"] = resolvedDark ? "light" : "dark";
+    const updated = { ...profile, theme: next };
+    saveUserProfile(updated);
+    setProfile(updated);
+  };
+
   return (
-    <MainLayout onAddClick={() => setIsModalOpen(true)} activeNav={activeNav} onNavChange={setActiveNav}>
+    <MainLayout onAddClick={() => setIsModalOpen(true)} activeNav={activeNav} onNavChange={setActiveNav} darkMode={resolvedDark} onToggleDarkMode={handleToggleDarkMode}>
       {activeNav === "Overview" && (
         <>
           <div className="mb-8">
@@ -98,6 +123,7 @@ export default function App() {
       )}
       {activeNav === "Accounts" && <Accounts transactions={transactions} />}
       {activeNav === "Budgets" && <Budgets transactions={transactions} />}
+      {activeNav === "Settings" && <Settings profile={profile} onSave={handleSaveProfile} onThemeChange={(theme) => { const updated = { ...profile, theme }; saveUserProfile(updated); setProfile(updated); }} />}
 
       <AddTransactionModal
         isOpen={isModalOpen}

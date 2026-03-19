@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Sidebar } from "./Sidebar";
 import { LayoutDashboard, Plus, Moon, Sun } from "lucide-react";
 
@@ -7,16 +6,11 @@ interface MainLayoutProps {
   onAddClick: () => void;
   activeNav: string;
   onNavChange: (label: string) => void;
+  darkMode: boolean;
+  onToggleDarkMode: () => void;
 }
 
-export function MainLayout({ children, onAddClick, activeNav, onNavChange }: MainLayoutProps) {
-  const [darkMode, setDarkMode] = useState(() =>
-    document.documentElement.classList.contains("dark"),
-  );
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-  }, [darkMode]);
+export function MainLayout({ children, onAddClick, activeNav, onNavChange, darkMode, onToggleDarkMode }: MainLayoutProps) {
 
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased">
@@ -29,7 +23,7 @@ export function MainLayout({ children, onAddClick, activeNav, onNavChange }: Mai
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setDarkMode((d) => !d)}
+              onClick={onToggleDarkMode}
               className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
             >
               {darkMode ? <Sun size={18} /> : <Moon size={18} />}
