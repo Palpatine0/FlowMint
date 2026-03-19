@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { Snackbar, Alert } from "@mui/material";
 import { DateFilter } from "./components/ui/DateFilter";
 
 import type {
@@ -26,6 +27,7 @@ export default function App() {
     from: "",
     to: "",
   });
+  const [toast, setToast] = useState<{ message: string; severity: "success" | "error" } | null>(null);
 
   const filteredTransactions = useMemo(() => {
     return filterTransactions(transactions, activeRange, customDates);
@@ -48,12 +50,14 @@ export default function App() {
     saveTransactions(updatedTransactions);
     setTransactions(updatedTransactions);
     setIsModalOpen(false);
+    setToast({ message: "Transaction added successfully!", severity: "success" });
   };
 
   const handleDeleteTransaction = (id: string) => {
     const updatedTransactions = transactions.filter((tx) => tx.id !== id);
     saveTransactions(updatedTransactions);
     setTransactions(updatedTransactions);
+    setToast({ message: "Transaction deleted.", severity: "error" });
   };
 
   const handleCustomChange = (field: "from" | "to", value: string) => {
@@ -82,6 +86,21 @@ export default function App() {
         onClose={() => setIsModalOpen(false)}
         onAdd={handleTransaction}
       />
+
+      <Snackbar
+        open={toast !== null}
+        autoHideDuration={3000}
+        onClose={() => setToast(null)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => setToast(null)}
+          severity={toast?.severity}
+          variant="filled"
+        >
+          {toast?.message}
+        </Alert>
+      </Snackbar>
     </MainLayout>
   );
 }
