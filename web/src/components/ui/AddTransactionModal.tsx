@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { X } from "lucide-react";
 import type { Transaction, TransactionType } from "../../types";
 
@@ -26,6 +26,13 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [type, setType] = useState<TransactionType>("expense");
   const [customCategory, setCustomCategory] = useState("");
+  const amountRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => amountRef.current?.focus(), 0);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -69,6 +76,7 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
               Amount
             </label>
             <input
+              ref={amountRef}
               type="number"
               required
               value={amount}
