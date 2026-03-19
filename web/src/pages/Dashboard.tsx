@@ -10,12 +10,14 @@ interface DashboardProps {
   stats: DashboardStats;
   transactions: Transaction[];
   onDeleteTransaction: (id: string) => void;
+  onEditTransaction: (tx: Transaction) => void;
 }
 
 export function Dashboard({
   stats,
   transactions,
   onDeleteTransaction,
+  onEditTransaction,
 }: DashboardProps) {
   const [displayLimit, setDisplayLimit] = useState(5);
   const [search, setSearch] = useState("");
@@ -120,6 +122,7 @@ export function Dashboard({
             <TransactionList
               transactions={visibleTransactions}
               onDelete={onDeleteTransaction}
+              onEdit={onEditTransaction}
               emptyMessage={emptyMessage}
             />
           </div>

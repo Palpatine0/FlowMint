@@ -21,6 +21,7 @@ import { AddTransactionModal } from "./components/ui/AddTransactionModal";
 
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editTransaction, setEditTransaction] = useState<Transaction | undefined>(undefined);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [activeRange, setActiveRange] = useState<FilterRange>("month");
   const [customDates, setCustomDates] = useState<CustomDateRange>({
@@ -46,11 +47,19 @@ export default function App() {
   }, []);
 
   const handleTransaction = async (newTx: Transaction) => {
-    const updatedTransactions = [newTx, ...transactions];
+    const updatedTransactions = editTransaction
+      ? transactions.map((tx) => (tx.id === newTx.id ? newTx : tx))
+      : [newTx, ...transactions];
     saveTransactions(updatedTransactions);
     setTransactions(updatedTransactions);
     setIsModalOpen(false);
-    setToast({ message: "Transaction added successfully!", severity: "success" });
+    setEditTransaction(undefined);
+    setToast({ message: editTransaction ? "Transaction updated!" : "Transaction added successfully!", severity: "success" });
+  };
+
+  const handleEditTransaction = (tx: Transaction) => {
+    setEditTransaction(tx);
+    setIsModalOpen(true);
   };
 
   const handleDeleteTransaction = (id: string) => {
@@ -79,12 +88,14 @@ export default function App() {
         stats={stats}
         transactions={filteredTransactions}
         onDeleteTransaction={handleDeleteTransaction}
+        onEditTransaction={handleEditTransaction}
       />
 
       <AddTransactionModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => { setIsModalOpen(false); setEditTransaction(undefined); }}
         onAdd={handleTransaction}
+        editTransaction={editTransaction}
       />
 
       <Snackbar

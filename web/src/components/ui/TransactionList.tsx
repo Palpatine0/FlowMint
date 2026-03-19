@@ -1,4 +1,4 @@
-import { ArrowUpCircle, ArrowDownCircle, Trash2 } from "lucide-react";
+import { ArrowUpCircle, ArrowDownCircle, Trash2, Pencil } from "lucide-react";
 import { useState } from "react";
 import {
   Dialog,
@@ -13,6 +13,7 @@ import type { Transaction } from "../../types";
 interface Props {
   transactions: Transaction[];
   onDelete: (id: string) => void;
+  onEdit: (tx: Transaction) => void;
   emptyMessage?: string;
 }
 const CATEGORY_COLORS: Record<string, string> = {
@@ -26,7 +27,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   Other: "bg-slate-100 text-slate-700",
 };
 
-export function TransactionList({ transactions, onDelete, emptyMessage = "No transactions yet. Add your first one!" }: Props) {
+export function TransactionList({ transactions, onDelete, onEdit, emptyMessage = "No transactions yet. Add your first one!" }: Props) {
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
   const handleDeleteClick = (id: string) => setConfirmId(id);
@@ -104,12 +105,20 @@ export function TransactionList({ transactions, onDelete, emptyMessage = "No tra
                     {tx.amount.toLocaleString()}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button
-                      onClick={() => handleDeleteClick(tx.id)}
-                      className="text-slate-300 dark:text-slate-600 hover:text-rose-500 transition-colors p-2"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                    <div className="flex items-center justify-end gap-1">
+                      <button
+                        onClick={() => onEdit(tx)}
+                        className="text-slate-300 dark:text-slate-600 hover:text-primary-500 transition-colors p-2"
+                      >
+                        <Pencil size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(tx.id)}
+                        className="text-slate-300 dark:text-slate-600 hover:text-rose-500 transition-colors p-2"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))

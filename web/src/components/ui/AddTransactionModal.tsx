@@ -6,6 +6,7 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   onAdd: (transaction: Transaction) => void;
+  editTransaction?: Transaction;
 }
 
 const PRESET_CATEGORIES = [
@@ -19,7 +20,10 @@ const PRESET_CATEGORIES = [
   "Other",
 ];
 
-export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
+export function AddTransactionModal({ isOpen, onClose, onAdd, editTransaction }: Props) {
+  const isEdit = !!editTransaction;
+  const isPreset = (cat: string) => PRESET_CATEGORIES.includes(cat);
+
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState(PRESET_CATEGORIES[0]);
@@ -28,6 +32,31 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
   const [customCategory, setCustomCategory] = useState("");
   const [errors, setErrors] = useState<{ amount?: string; description?: string }>({});
   const amountRef = useRef<HTMLInputElement>(null);
+
+  // Pre-fill form when editing
+  useEffect(() => {
+    if (isOpen && editTransaction) {
+      setAmount(String(editTransaction.amount));
+      setDescription(editTransaction.description);
+      setType(editTransaction.type);
+      setDate(editTransaction.date.split("T")[0]);
+      if (isPreset(editTransaction.category)) {
+        setCategory(editTransaction.category);
+        setCustomCategory("");
+      } else {
+        setCategory("Other");
+        setCustomCategory(editTransaction.category);
+      }
+    } else if (isOpen && !editTransaction) {
+      setAmount("");
+      setDescription("");
+      setCategory(PRESET_CATEGORIES[0]);
+      setCustomCategory("");
+      setDate(new Date().toISOString().split("T")[0]);
+      setType("expense");
+      setErrors({});
+    }
+  }, [isOpen, editTransaction]);
 
   useEffect(() => {
     if (isOpen) {
@@ -62,7 +91,7 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
     const finalCategory = category === "Other" ? customCategory : category;
 
     onAdd({
-      id: crypto.randomUUID(),
+      id: editTransaction ? editTransaction.id : crypto.randomUUID(),
       amount: parseFloat(amount),
       description,
       type,
@@ -70,19 +99,13 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
       category: finalCategory || "Uncategorized",
     });
     onClose();
-    setAmount("");
-    setDescription("");
-    setCategory(PRESET_CATEGORIES[0]);
-    setCustomCategory("");
-    setDate(new Date().toISOString().split("T")[0]);
-    setErrors({});
   };
 
   return (
     <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md shadow-2xl">
         <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-700">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Add Transaction</h2>
+          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">{isEdit ? "Edit Transaction" : "Add Transaction"}</h2>
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
@@ -185,7 +208,7 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
             type="submit"
             className="w-full bg-primary-400 text-white py-3 rounded-xl font-bold hover:bg-primary-500 transition-colors mt-4"
           >
-            Save Transaction
+            {isEdit ? "Update Transaction" : "Save Transaction"}
           </button>
         </form>
       </div>
