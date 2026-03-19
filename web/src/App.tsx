@@ -18,6 +18,7 @@ import {
 import { MainLayout } from "./components/layout/MainLayout";
 import { Dashboard } from "./pages/Dashboard";
 import { Accounts } from "./pages/Accounts";
+import { Budgets } from "./pages/Budgets";
 import { AddTransactionModal } from "./components/ui/AddTransactionModal";
 
 export default function App() {
@@ -96,6 +97,7 @@ export default function App() {
         </>
       )}
       {activeNav === "Accounts" && <Accounts transactions={transactions} />}
+      {activeNav === "Budgets" && <Budgets transactions={transactions} />}
 
       <AddTransactionModal
         isOpen={isModalOpen}
