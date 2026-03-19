@@ -16,6 +16,12 @@ export function filterTransactions(
   return transactions.filter((t) => {
     const tDate = new Date(t.date);
 
+    if (range === "week") {
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+      return tDate >= startOfWeek;
+    }
     if (range === "month")
       return (
         tDate.getMonth() === now.getMonth() &&

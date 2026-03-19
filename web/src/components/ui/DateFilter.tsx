@@ -8,6 +8,7 @@ interface DateFilterProps {
 }
 
 const ranges: { id: FilterRange; label: string }[] = [
+  { id: "week", label: "Week" },
   { id: "month", label: "Month" },
   { id: "year", label: "Year" },
   { id: "all", label: "All" },

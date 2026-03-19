@@ -25,7 +25,7 @@ export interface DashboardStats {
   expensesChange: number;
 }
 
-export type FilterRange = "month" | "year" | "all" | "custom";
+export type FilterRange = "week" | "month" | "year" | "all" | "custom";
 
 export interface CustomDateRange {
   from: string;
