@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { LayoutDashboard, Plus } from "lucide-react";
 
@@ -7,14 +8,16 @@ interface MainLayoutProps {
 }
 
 export function MainLayout({ children, onAddClick }: MainLayoutProps) {
+  const [activeNav, setActiveNav] = useState("Overview");
+
   return (
     <div className="flex h-screen bg-slate-50 text-slate-900 antialiased">
-      <Sidebar />
+      <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
           <div className="flex items-center gap-2">
             <LayoutDashboard className="text-slate-400" size={20} />
-            <h1 className="text-lg font-semibold text-slate-800">Overview</h1>
+            <h1 className="text-lg font-semibold text-slate-800">{activeNav}</h1>
           </div>
           <button
             onClick={onAddClick}

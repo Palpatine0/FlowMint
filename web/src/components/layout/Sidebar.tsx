@@ -9,14 +9,19 @@ import {
 import iconLogo from "../../assets/icon-logo.svg";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Overview", active: true },
-  { icon: Wallet, label: "Accounts", active: false },
-  { icon: CreditCard, label: "Transactions", active: false },
-  { icon: PieChart, label: "Budgets", active: false },
-  { icon: Settings, label: "Settings", active: false },
+  { icon: LayoutDashboard, label: "Overview" },
+  { icon: Wallet, label: "Accounts" },
+  { icon: CreditCard, label: "Transactions" },
+  { icon: PieChart, label: "Budgets" },
+  { icon: Settings, label: "Settings" },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  activeNav: string;
+  onNavChange: (label: string) => void;
+}
+
+export function Sidebar({ activeNav, onNavChange }: SidebarProps) {
   return (
     <aside className="w-64 h-screen bg-white border-r border-slate-200 flex flex-col shrink-0">
       <div className="p-6 border-b border-slate-100">
@@ -30,8 +35,9 @@ export function Sidebar() {
         {menuItems.map((item) => (
           <button
             key={item.label}
+            onClick={() => onNavChange(item.label)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-              item.active
+              activeNav === item.label
                 ? "bg-primary-50 text-primary-500 font-semibold"
                 : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
             }`}
