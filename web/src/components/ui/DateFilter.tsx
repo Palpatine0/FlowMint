@@ -43,6 +43,7 @@ export function DateFilter({
           <input
             type="date"
             value={customDates.from}
+            max={customDates.to || undefined}
             className="px-3 py-1 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-400 bg-white"
             onChange={(e) => onCustomChange("from", e.target.value)}
           />
@@ -50,6 +51,7 @@ export function DateFilter({
           <input
             type="date"
             value={customDates.to}
+            min={customDates.from || undefined}
             className="px-3 py-1 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-400 bg-white"
             onChange={(e) => onCustomChange("to", e.target.value)}
           />
