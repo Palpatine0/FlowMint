@@ -24,3 +24,10 @@ export interface DashboardStats {
   incomeChange: number;
   expensesChange: number;
 }
+
+export type FilterRange = "month" | "year" | "all" | "custom";
+
+export interface CustomDateRange {
+  from: string;
+  to: string;
+}
