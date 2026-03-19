@@ -1,8 +1,8 @@
-import { Wallet, TrendingUp, TrendingDown, Search } from "lucide-react";
+import { Wallet, TrendingUp, TrendingDown, Search, ChevronDown, Check } from "lucide-react";
 import { StatCard } from "../components/ui/StatCard";
 import { TransactionList } from "../components/ui/TransactionList";
 import type { Transaction, DashboardStats } from "../types";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { BalanceChart } from "../components/ui/BalanceChart";
 
 interface DashboardProps {
@@ -18,12 +18,25 @@ export function Dashboard({
 }: DashboardProps) {
   const [displayLimit, setDisplayLimit] = useState(5);
   const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const categories = ["All", ...Array.from(new Set(transactions.map((tx) => tx.category))).sort()];
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node))
+        setDropdownOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const sortedTransactions = [...transactions]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .filter((tx) =>
-      tx.description.toLowerCase().includes(search.toLowerCase()),
-    );
+    .filter((tx) => tx.description.toLowerCase().includes(search.toLowerCase()))
+    .filter((tx) => categoryFilter === "All" || tx.category === categoryFilter);
 
   const visibleTransactions = sortedTransactions.slice(0, displayLimit);
   const hasMore = displayLimit < sortedTransactions.length;
@@ -59,18 +72,43 @@ export function Dashboard({
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-2 space-y-4">
-          <div className="relative">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setDisplayLimit(5); }}
-              placeholder="Search transactions..."
-              className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-400 bg-white"
-            />
+          <div className="flex gap-3">
+            <div className="relative flex-1">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setDisplayLimit(5); }}
+                placeholder="Search transactions..."
+                className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-400 bg-white"
+              />
+            </div>
+            <div ref={dropdownRef} className="relative">
+              <button
+                onClick={() => setDropdownOpen((o) => !o)}
+                className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-xl text-sm bg-white text-slate-600 hover:border-primary-400 focus:ring-2 focus:ring-primary-400 outline-none min-w-[130px] justify-between"
+              >
+                <span>{categoryFilter}</span>
+                <ChevronDown size={14} className={`text-slate-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg z-20 overflow-hidden">
+                  {categories.map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => { setCategoryFilter(cat); setDisplayLimit(5); setDropdownOpen(false); }}
+                      className="flex items-center justify-between w-full px-4 py-2 text-sm text-slate-600 hover:bg-primary-50 hover:text-primary-600 transition-colors"
+                    >
+                      {cat}
+                      {cat === categoryFilter && <Check size={13} className="text-primary-500" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
