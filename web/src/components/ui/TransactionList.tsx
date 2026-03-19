@@ -1,4 +1,13 @@
 import { ArrowUpCircle, ArrowDownCircle, Trash2 } from "lucide-react";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+} from "@mui/material";
 import type { Transaction } from "../../types";
 
 interface Props {
@@ -17,6 +26,15 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export function TransactionList({ transactions, onDelete }: Props) {
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+
+  const handleDeleteClick = (id: string) => setConfirmId(id);
+  const handleCancel = () => setConfirmId(null);
+  const handleConfirm = () => {
+    if (confirmId) onDelete(confirmId);
+    setConfirmId(null);
+  };
+
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
       <div className="p-6 border-b border-slate-100 flex justify-between items-center">
@@ -86,7 +104,7 @@ export function TransactionList({ transactions, onDelete }: Props) {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <button
-                      onClick={() => onDelete(tx.id)}
+                      onClick={() => handleDeleteClick(tx.id)}
                       className="text-slate-300 hover:text-rose-500 transition-colors p-2"
                     >
                       <Trash2 size={18} />
@@ -98,6 +116,22 @@ export function TransactionList({ transactions, onDelete }: Props) {
           </tbody>
         </table>
       </div>
+
+      <Dialog open={confirmId !== null} onClose={handleCancel}>
+        <DialogTitle>Delete Transaction</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this transaction? This action cannot
+            be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleConfirm} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
