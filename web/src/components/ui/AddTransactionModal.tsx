@@ -7,6 +7,7 @@ interface Props {
   onClose: () => void;
   onAdd: (transaction: Transaction) => void;
   editTransaction?: Transaction;
+  defaultCurrency?: string;
 }
 
 const PRESET_CATEGORIES = [
@@ -37,6 +38,7 @@ export function AddTransactionModal({
   onClose,
   onAdd,
   editTransaction,
+  defaultCurrency = "USD",
 }: Props) {
   const isEdit = !!editTransaction;
   const isPreset = (cat: string) => PRESET_CATEGORIES.includes(cat);
@@ -53,7 +55,7 @@ export function AddTransactionModal({
   const [date, setDate] = useState(getLocalDateString(new Date()));
   const [type, setType] = useState<TransactionType>("expense");
   const [account, setAccount] = useState(PRESET_ACCOUNTS[0]);
-  const [currency, setCurrency] = useState("USD");
+  const [currency, setCurrency] = useState(defaultCurrency);
   const [customCategory, setCustomCategory] = useState("");
   const [errors, setErrors] = useState<{
     amount?: string;
@@ -76,14 +78,14 @@ export function AddTransactionModal({
         setCustomCategory(editTransaction.category);
       }
       setAccount(editTransaction.account || PRESET_ACCOUNTS[0]);
-      setCurrency(editTransaction.currency || "USD");
+      setCurrency(editTransaction.currency || defaultCurrency);
     } else if (isOpen && !editTransaction) {
       setAmount("");
       setDescription("");
       setCategory(PRESET_CATEGORIES[0]);
       setCustomCategory("");
       setAccount(PRESET_ACCOUNTS[0]);
-      setCurrency("USD");
+      setCurrency(defaultCurrency);
       setDate(getLocalDateString(new Date()));
       setType("expense");
       setErrors({});
