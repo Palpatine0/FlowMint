@@ -41,6 +41,10 @@ export function Dashboard({
 
   const visibleTransactions = sortedTransactions.slice(0, displayLimit);
   const hasMore = displayLimit < sortedTransactions.length;
+  const isFiltered = search.trim() !== "" || categoryFilter !== "All";
+  const emptyMessage = isFiltered
+    ? "No transactions match your search or filter."
+    : "No transactions yet. Add your first one!";
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -116,6 +120,7 @@ export function Dashboard({
             <TransactionList
               transactions={visibleTransactions}
               onDelete={onDeleteTransaction}
+              emptyMessage={emptyMessage}
             />
           </div>
 

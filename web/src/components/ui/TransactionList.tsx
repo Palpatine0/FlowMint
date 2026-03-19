@@ -13,6 +13,7 @@ import type { Transaction } from "../../types";
 interface Props {
   transactions: Transaction[];
   onDelete: (id: string) => void;
+  emptyMessage?: string;
 }
 const CATEGORY_COLORS: Record<string, string> = {
   Rent: "bg-purple-100 text-purple-700",
@@ -25,7 +26,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   Other: "bg-slate-100 text-slate-700",
 };
 
-export function TransactionList({ transactions, onDelete }: Props) {
+export function TransactionList({ transactions, onDelete, emptyMessage = "No transactions yet. Add your first one!" }: Props) {
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
   const handleDeleteClick = (id: string) => setConfirmId(id);
@@ -60,7 +61,7 @@ export function TransactionList({ transactions, onDelete }: Props) {
                   colSpan={4}
                   className="px-6 py-12 text-center text-slate-400"
                 >
-                  No transactions yet. Add your first one above!
+                  {emptyMessage}
                 </td>
               </tr>
             ) : (
