@@ -101,7 +101,7 @@ export default function App() {
   };
 
   return (
-    <MainLayout onAddClick={() => setIsModalOpen(true)} activeNav={activeNav} onNavChange={setActiveNav} darkMode={resolvedDark} onToggleDarkMode={handleToggleDarkMode}>
+    <MainLayout onAddClick={() => setIsModalOpen(true)} activeNav={activeNav} onNavChange={setActiveNav} darkMode={resolvedDark} onToggleDarkMode={handleToggleDarkMode} userName={profile.name} avatarUrl={profile.avatarUrl}>
       {activeNav === "Overview" && (
         <>
           <div className="mb-8">
@@ -130,6 +130,7 @@ export default function App() {
         onClose={() => { setIsModalOpen(false); setEditTransaction(undefined); }}
         onAdd={handleTransaction}
         editTransaction={editTransaction}
+        defaultCurrency={profile.defaultCurrency}
       />
 
       <Snackbar

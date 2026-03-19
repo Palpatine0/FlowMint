@@ -8,13 +8,15 @@ interface MainLayoutProps {
   onNavChange: (label: string) => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
+  userName?: string;
+  avatarUrl?: string;
 }
 
-export function MainLayout({ children, onAddClick, activeNav, onNavChange, darkMode, onToggleDarkMode }: MainLayoutProps) {
+export function MainLayout({ children, onAddClick, activeNav, onNavChange, darkMode, onToggleDarkMode, userName, avatarUrl }: MainLayoutProps) {
 
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased">
-      <Sidebar activeNav={activeNav} onNavChange={onNavChange} />
+      <Sidebar activeNav={activeNav} onNavChange={onNavChange} userName={userName} avatarUrl={avatarUrl} />
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header className="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-8 shrink-0">
           <div className="flex items-center gap-2">
