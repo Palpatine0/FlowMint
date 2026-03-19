@@ -5,6 +5,7 @@ import type { Transaction, DashboardStats, FilterRange } from "../types";
 import { useState, useRef, useEffect } from "react";
 import { BalanceChart } from "../components/ui/BalanceChart";
 import { CategoryChart } from "../components/ui/CategoryChart";
+import { DailyBarChart } from "../components/ui/DailyBarChart";
 
 interface DashboardProps {
   activeRange: FilterRange;
@@ -133,7 +134,7 @@ export function Dashboard({
             </div>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden mb-6">
             <TransactionList
               transactions={visibleTransactions}
               onDelete={onDeleteTransaction}
@@ -177,6 +178,15 @@ export function Dashboard({
               </h3>
               <div className="flex-1 w-full min-h-0">
                 <CategoryChart transactions={transactions} />
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm h-[340px] flex flex-col">
+              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-4">
+                {periodLabel} Cash Flow
+              </h3>
+              <div className="flex-1 w-full min-h-0">
+                <DailyBarChart transactions={transactions} activeRange={activeRange} />
               </div>
             </div>
           </div>
