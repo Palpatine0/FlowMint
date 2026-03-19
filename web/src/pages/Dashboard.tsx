@@ -88,24 +88,24 @@ export function Dashboard({
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setDisplayLimit(5); }}
                 placeholder="Search transactions..."
-                className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-400 bg-white"
+                className="w-full pl-9 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-800 dark:text-slate-200 dark:placeholder-slate-500"
               />
             </div>
             <div ref={dropdownRef} className="relative">
               <button
                 onClick={() => setDropdownOpen((o) => !o)}
-                className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-xl text-sm bg-white text-slate-600 hover:border-primary-400 focus:ring-2 focus:ring-primary-400 outline-none min-w-[130px] justify-between"
+                className="flex items-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-primary-400 focus:ring-2 focus:ring-primary-400 outline-none min-w-[130px] justify-between"
               >
                 <span>{categoryFilter}</span>
                 <ChevronDown size={14} className={`text-slate-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
               </button>
               {dropdownOpen && (
-                <div className="absolute right-0 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg z-20 overflow-hidden">
+                <div className="absolute right-0 mt-1 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg z-20 overflow-hidden">
                   {categories.map((cat) => (
                     <button
                       key={cat}
                       onClick={() => { setCategoryFilter(cat); setDisplayLimit(5); setDropdownOpen(false); }}
-                      className="flex items-center justify-between w-full px-4 py-2 text-sm text-slate-600 hover:bg-primary-50 hover:text-primary-600 transition-colors"
+                      className="flex items-center justify-between w-full px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-primary-50 dark:hover:bg-slate-700 hover:text-primary-600 transition-colors"
                     >
                       {cat}
                       {cat === categoryFilter && <Check size={13} className="text-primary-500" />}
@@ -116,7 +116,7 @@ export function Dashboard({
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
             <TransactionList
               transactions={visibleTransactions}
               onDelete={onDeleteTransaction}
@@ -138,9 +138,9 @@ export function Dashboard({
 
         <div className="lg:col-span-1">
           <div className="sticky top-8 space-y-6">
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm h-[400px] flex flex-col">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm h-[400px] flex flex-col">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
+                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider">
                   Balance Trend
                 </h3>
                 <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-primary-50 text-primary-500">
@@ -153,8 +153,8 @@ export function Dashboard({
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm h-[340px] flex flex-col">
-              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm h-[340px] flex flex-col">
+              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-4">
                 Spending by Category
               </h3>
               <div className="flex-1 w-full min-h-0">

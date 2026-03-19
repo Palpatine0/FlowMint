@@ -37,9 +37,9 @@ export function TransactionList({ transactions, onDelete, emptyMessage = "No tra
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-        <h3 className="font-bold text-slate-800 text-lg">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+      <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+        <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg">
           Recent Transactions
         </h3>
       </div>
@@ -47,14 +47,14 @@ export function TransactionList({ transactions, onDelete, emptyMessage = "No tra
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-slate-50/50 text-slate-500 uppercase text-xs font-semibold">
+            <tr className="bg-slate-50/50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 uppercase text-xs font-semibold">
               <th className="px-6 py-4">Transaction</th>
               <th className="px-6 py-4">Category</th>
               <th className="px-6 py-4 text-right">Amount</th>
               <th className="px-6 py-4 text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
             {transactions.length === 0 ? (
               <tr>
                 <td
@@ -68,7 +68,7 @@ export function TransactionList({ transactions, onDelete, emptyMessage = "No tra
               transactions.map((tx) => (
                 <tr
                   key={tx.id}
-                  className="hover:bg-slate-50/50 transition-colors group"
+                  className="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors group"
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -78,10 +78,10 @@ export function TransactionList({ transactions, onDelete, emptyMessage = "No tra
                         <ArrowDownCircle className="text-rose-500" size={20} />
                       )}
                       <div>
-                        <p className="font-medium text-slate-900">
+                        <p className="font-medium text-slate-900 dark:text-slate-100">
                           {tx.description}
                         </p>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-slate-400 dark:text-slate-500">
                           {new Date(tx.date).toLocaleDateString()}
                         </p>
                       </div>
@@ -98,7 +98,7 @@ export function TransactionList({ transactions, onDelete, emptyMessage = "No tra
                     </span>
                   </td>
                   <td
-                    className={`px-6 py-4 text-right font-semibold ${tx.type === "income" ? "text-emerald-600" : "text-slate-900"}`}
+                    className={`px-6 py-4 text-right font-semibold ${tx.type === "income" ? "text-emerald-600" : "text-slate-900 dark:text-slate-100"}`}
                   >
                     {tx.type === "income" ? "+" : "-"}$
                     {tx.amount.toLocaleString()}
@@ -106,7 +106,7 @@ export function TransactionList({ transactions, onDelete, emptyMessage = "No tra
                   <td className="px-6 py-4 text-right">
                     <button
                       onClick={() => handleDeleteClick(tx.id)}
-                      className="text-slate-300 hover:text-rose-500 transition-colors p-2"
+                      className="text-slate-300 dark:text-slate-600 hover:text-rose-500 transition-colors p-2"
                     >
                       <Trash2 size={18} />
                     </button>

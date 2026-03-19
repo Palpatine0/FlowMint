@@ -23,15 +23,15 @@ export function DateFilter({
 }: DateFilterProps) {
   return (
     <div className="flex items-center gap-4">
-      <div className="flex bg-slate-100 p-1 rounded-xl w-fit">
+      <div className="flex bg-slate-100 dark:bg-slate-700 p-1 rounded-xl w-fit">
         {ranges.map((r) => (
           <button
             key={r.id}
             onClick={() => onRangeChange(r.id)}
             className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
               activeRange === r.id
-                ? "bg-white text-primary-500 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
+                ? "bg-white dark:bg-slate-600 text-primary-500 shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
             }`}
           >
             {r.label}
@@ -45,15 +45,15 @@ export function DateFilter({
             type="date"
             value={customDates.from}
             max={customDates.to || undefined}
-            className="px-3 py-1 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-400 bg-white"
+            className="px-3 py-1 border border-slate-200 dark:border-slate-600 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-200"
             onChange={(e) => onCustomChange("from", e.target.value)}
           />
-          <span className="text-slate-400 text-sm font-medium italic">to</span>
+          <span className="text-slate-400 dark:text-slate-500 text-sm font-medium italic">to</span>
           <input
             type="date"
             value={customDates.to}
             min={customDates.from || undefined}
-            className="px-3 py-1 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-400 bg-white"
+            className="px-3 py-1 border border-slate-200 dark:border-slate-600 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-200"
             onChange={(e) => onCustomChange("to", e.target.value)}
           />
         </div>

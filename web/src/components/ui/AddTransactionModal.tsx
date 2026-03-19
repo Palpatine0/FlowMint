@@ -80,12 +80,12 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
 
   return (
     <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
-        <div className="flex justify-between items-center p-6 border-b border-slate-100">
-          <h2 className="text-xl font-bold text-slate-800">Add Transaction</h2>
+      <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md shadow-2xl">
+        <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-700">
+          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Add Transaction</h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600"
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
           >
             <X size={24} />
           </button>
@@ -93,7 +93,7 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
               Amount
             </label>
             <input
@@ -101,45 +101,45 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
               type="number"
               value={amount}
               onChange={(e) => { setAmount(e.target.value); setErrors((p) => ({ ...p, amount: undefined })); }}
-              className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary-400 outline-none ${errors.amount ? "border-rose-400" : "border-slate-200"}`}
+              className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary-400 outline-none bg-white dark:bg-slate-700 dark:text-slate-100 ${errors.amount ? "border-rose-400" : "border-slate-200 dark:border-slate-600"}`}
               placeholder="0.00"
             />
             {errors.amount && <p className="text-rose-500 text-xs mt-1">{errors.amount}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
               Description
             </label>
             <input
               type="text"
               value={description}
               onChange={(e) => { setDescription(e.target.value); setErrors((p) => ({ ...p, description: undefined })); }}
-              className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary-400 outline-none ${errors.description ? "border-rose-400" : "border-slate-200"}`}
+              className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary-400 outline-none bg-white dark:bg-slate-700 dark:text-slate-100 ${errors.description ? "border-rose-400" : "border-slate-200 dark:border-slate-600"}`}
               placeholder="e.g. Monthly Rent"
             />
             {errors.description && <p className="text-rose-500 text-xs mt-1">{errors.description}</p>}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                 Date
               </label>
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-400"
+                className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                 Category
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white"
+                className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
               >
                 {PRESET_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -150,7 +150,7 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
             </div>
             {category === "Other" && (
               <div className="animate-in fade-in slide-in-from-top-1 duration-200">
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Custom Category
                 </label>
                 <input
@@ -159,7 +159,7 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
                   placeholder="e.g. Gym, Subscriptions..."
                   value={customCategory}
                   onChange={(e) => setCustomCategory(e.target.value)}
-                  className="w-full px-4 py-2 border border-primary-200 bg-primary-50/30 rounded-xl focus:ring-2 focus:ring-primary-400 outline-none"
+                  className="w-full px-4 py-2 border border-primary-200 dark:border-slate-600 bg-primary-50/30 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-primary-400 outline-none"
                 />
               </div>
             )}
@@ -168,14 +168,14 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
             <button
               type="button"
               onClick={() => setType("income")}
-              className={`flex-1 py-2 rounded-xl border-2 transition-all ${type === "income" ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-100 text-slate-500"}`}
+              className={`flex-1 py-2 rounded-xl border-2 transition-all ${type === "income" ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-100 dark:border-slate-600 text-slate-500 dark:text-slate-400"}`}
             >
               Income
             </button>
             <button
               type="button"
               onClick={() => setType("expense")}
-              className={`flex-1 py-2 rounded-xl border-2 transition-all ${type === "expense" ? "border-rose-500 bg-rose-50 text-rose-700" : "border-slate-100 text-slate-500"}`}
+              className={`flex-1 py-2 rounded-xl border-2 transition-all ${type === "expense" ? "border-rose-500 bg-rose-50 text-rose-700" : "border-slate-100 dark:border-slate-600 text-slate-500 dark:text-slate-400"}`}
             >
               Expense
             </button>
