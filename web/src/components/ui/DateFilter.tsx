@@ -29,7 +29,7 @@ export function DateFilter({
             onClick={() => onRangeChange(r.id)}
             className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
               activeRange === r.id
-                ? "bg-white text-blue-600 shadow-sm"
+                ? "bg-white text-primary-500 shadow-sm"
                 : "text-slate-500 hover:text-slate-700"
             }`}
           >
@@ -43,14 +43,14 @@ export function DateFilter({
           <input
             type="date"
             value={customDates.from}
-            className="px-3 py-1 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="px-3 py-1 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-400 bg-white"
             onChange={(e) => onCustomChange("from", e.target.value)}
           />
           <span className="text-slate-400 text-sm font-medium italic">to</span>
           <input
             type="date"
             value={customDates.to}
-            className="px-3 py-1 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="px-3 py-1 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-400 bg-white"
             onChange={(e) => onCustomChange("to", e.target.value)}
           />
         </div>

@@ -18,7 +18,7 @@ export function MainLayout({ children, onAddClick }: MainLayoutProps) {
           </div>
           <button
             onClick={onAddClick}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm shadow-blue-200"
+            className="flex items-center gap-2 bg-primary-400 hover:bg-primary-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm shadow-primary-200"
           >
             <Plus size={18} /> Add Transaction
           </button>

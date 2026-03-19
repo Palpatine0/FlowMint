@@ -34,7 +34,7 @@ export function Dashboard({
           change={`${stats.balanceChange.toFixed(1)}%`}
           isPositive={stats.balance >= 0}
           icon={Wallet}
-          iconColor="bg-blue-600"
+          iconColor="bg-primary-400"
         />
         <StatCard
           title="Monthly Income"
@@ -67,7 +67,7 @@ export function Dashboard({
             <div className="flex justify-center mt-6">
               <button
                 onClick={() => setDisplayLimit((prev) => prev + 5)}
-                className="text-sm font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-8 py-2.5 rounded-full transition-all"
+                className="text-sm font-semibold text-primary-500 hover:text-primary-600 bg-primary-50 hover:bg-primary-100 px-8 py-2.5 rounded-full transition-all"
               >
                 Load More
               </button>
@@ -82,7 +82,7 @@ export function Dashboard({
                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
                   Balance Trend
                 </h3>
-                <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-blue-50 text-blue-600">
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-primary-50 text-primary-500">
                   LIVE
                 </span>
               </div>
