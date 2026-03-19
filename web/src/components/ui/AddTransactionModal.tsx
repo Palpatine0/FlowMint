@@ -20,6 +20,8 @@ const PRESET_CATEGORIES = [
   "Other",
 ];
 
+const PRESET_ACCOUNTS = ["Wallet", "Bank Account", "Credit Card"];
+
 export function AddTransactionModal({
   isOpen,
   onClose,
@@ -40,6 +42,7 @@ export function AddTransactionModal({
 
   const [date, setDate] = useState(getLocalDateString(new Date()));
   const [type, setType] = useState<TransactionType>("expense");
+  const [account, setAccount] = useState(PRESET_ACCOUNTS[0]);
   const [customCategory, setCustomCategory] = useState("");
   const [errors, setErrors] = useState<{
     amount?: string;
@@ -61,11 +64,13 @@ export function AddTransactionModal({
         setCategory("Other");
         setCustomCategory(editTransaction.category);
       }
+      setAccount(editTransaction.account || PRESET_ACCOUNTS[0]);
     } else if (isOpen && !editTransaction) {
       setAmount("");
       setDescription("");
       setCategory(PRESET_CATEGORIES[0]);
       setCustomCategory("");
+      setAccount(PRESET_ACCOUNTS[0]);
       setDate(getLocalDateString(new Date()));
       setType("expense");
       setErrors({});
@@ -110,6 +115,7 @@ export function AddTransactionModal({
       type,
       date: new Date(date + "T00:00:00").toISOString(),
       category: finalCategory || "Uncategorized",
+      account: account,
     });
     onClose();
   };
@@ -196,22 +202,38 @@ export function AddTransactionModal({
                 ))}
               </select>
             </div>
-            {category === "Other" && (
-              <div className="animate-in fade-in slide-in-from-top-1 duration-200">
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Custom Category
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Gym, Subscriptions..."
-                  value={customCategory}
-                  onChange={(e) => setCustomCategory(e.target.value)}
-                  className="w-full px-4 py-2 border border-primary-200 dark:border-slate-600 bg-primary-50/30 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-primary-400 outline-none"
-                />
-              </div>
-            )}
           </div>
+          <div className="animate-in fade-in slide-in-from-top-1 duration-200">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Account / Payment Method
+            </label>
+            <select
+              value={account}
+              onChange={(e) => setAccount(e.target.value)}
+              className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
+            >
+              {PRESET_ACCOUNTS.map((acc) => (
+                <option key={acc} value={acc}>
+                  {acc}
+                </option>
+              ))}
+            </select>
+          </div>
+          {category === "Other" && (
+            <div className="animate-in fade-in slide-in-from-top-1 duration-200">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Custom Category
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Gym, Subscriptions..."
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                className="w-full px-4 py-2 border border-primary-200 dark:border-slate-600 bg-primary-50/30 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-primary-400 outline-none"
+              />
+            </div>
+          )}
           <div className="flex gap-4">
             <button
               type="button"
@@ -236,7 +258,7 @@ export function AddTransactionModal({
             {isEdit ? "Update Transaction" : "Save Transaction"}
           </button>
         </form>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }

@@ -6,23 +6,19 @@ interface Props {
 }
 
 const CATEGORY_META: Record<string, { pillBg: string; pillText: string; bar: string }> = {
-  Rent:          { pillBg: "#f3e8ff", pillText: "#7e22ce", bar: "#c084fc" },
-  Food:          { pillBg: "#fff7ed", pillText: "#c2410c", bar: "#fb923c" },
-  Clothes:       { pillBg: "#eff6ff", pillText: "#1d4ed8", bar: "#60a5fa" },
-  Transport:     { pillBg: "#ecfeff", pillText: "#0e7490", bar: "#22d3ee" },
-  Utilities:     { pillBg: "#fefce8", pillText: "#a16207", bar: "#facc15" },
+  Rent: { pillBg: "#f3e8ff", pillText: "#7e22ce", bar: "#c084fc" },
+  Food: { pillBg: "#fff7ed", pillText: "#c2410c", bar: "#fb923c" },
+  Clothes: { pillBg: "#eff6ff", pillText: "#1d4ed8", bar: "#60a5fa" },
+  Transport: { pillBg: "#ecfeff", pillText: "#0e7490", bar: "#22d3ee" },
+  Utilities: { pillBg: "#fefce8", pillText: "#a16207", bar: "#facc15" },
   Entertainment: { pillBg: "#fdf2f8", pillText: "#be185d", bar: "#f472b6" },
-  Salary:        { pillBg: "#f0fdf4", pillText: "#15803d", bar: "#4ade80" },
+  Salary: { pillBg: "#f0fdf4", pillText: "#15803d", bar: "#4ade80" },
 };
 const DEFAULT_META = { pillBg: "#f8fafc", pillText: "#475569", bar: "#94a3b8" };
 
 export function Accounts({ transactions }: Props) {
-  const totalIncome   = transactions.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
+  // Restoring these since the category breakdown part still uses them:
   const totalExpenses = transactions.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
-  const balance       = totalIncome - totalExpenses;
-  const savingsRate   = totalIncome > 0 ? (balance / totalIncome) * 100 : 0;
-  const spentPct      = totalIncome > 0 ? Math.min((totalExpenses / totalIncome) * 100, 100) : 0;
-
   const categoryTotals = Object.entries(
     transactions
       .filter((t) => t.type === "expense")
@@ -33,70 +29,64 @@ export function Accounts({ transactions }: Props) {
   )
     .map(([name, total]) => ({ name, total }))
     .sort((a, b) => b.total - a.total);
-
   const maxCat = categoryTotals[0]?.total ?? 1;
+
+  const accountNames = Array.from(new Set(transactions.map(t => t.account || "Wallet")));
+
+  const accountSummaries = accountNames.map(accName => {
+    const accTxs = transactions.filter(t => (t.account || "Wallet") === accName);
+    const inc = accTxs.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
+    const exp = accTxs.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
+    const bal = inc - exp;
+    const spentPct = inc > 0 ? Math.min((exp / inc) * 100, 100) : 0;
+    return {
+      name: accName,
+      balance: bal,
+      income: inc,
+      expenses: exp,
+      spentPct,
+      txCount: accTxs.length
+    };
+  });
 
   return (
     <div className="max-w-3xl mx-auto" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 
-      {/* ── Balance card ─────────────────────────────── */}
-      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm" style={{ padding: "24px" }}>
-        <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">
-          Main Wallet · Total Balance
-        </p>
-        <p className="text-5xl font-bold text-slate-900 dark:text-slate-100 mb-5">
-          ${balance.toLocaleString()}
-        </p>
+      <p className="text-sm font-semibold text-slate-400 uppercase tracking-widest px-2 pb-2">
+        My Accounts
+      </p>
 
-        {/* progress bar */}
-        <div className="mb-1">
-          <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full">
-            <div
-              className="h-2 bg-primary-400 rounded-full"
-              style={{ width: `${spentPct}%`, transition: "width .5s ease" }}
-            />
+      {accountSummaries.map((acc) => (
+        <div key={acc.name} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm p-6 mb-4">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">{acc.name}</h3>
+            <span className="text-3xl font-bold text-slate-900 dark:text-white">
+              ${acc.balance.toLocaleString()}
+            </span>
           </div>
-        </div>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <span className="text-xs text-slate-400 dark:text-slate-500">{spentPct.toFixed(1)}% spent</span>
-          <span className="text-xs text-slate-400 dark:text-slate-500">${(totalIncome - totalExpenses).toLocaleString()} remaining</span>
-        </div>
-      </div>
 
-      {/* ── Income / Expense side by side ────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-        {/* Income */}
-        <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/30 rounded-2xl" style={{ padding: "20px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
-            <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">Total Income</p>
-            <div style={{ padding: "6px", borderRadius: "8px" }} className="bg-emerald-100 dark:bg-emerald-800/40">
-              <ArrowUpRight size={16} className="text-emerald-600 dark:text-emerald-400" />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+            <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/30 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">Income</p>
+                <ArrowUpRight size={14} className="text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <p className="text-xl font-bold text-emerald-700 dark:text-emerald-300">
+                ${acc.income.toLocaleString()}
+              </p>
+            </div>
+            <div className="bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-800/30 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-semibold text-rose-700 dark:text-rose-400">Expenses</p>
+                <ArrowDownRight size={14} className="text-rose-600 dark:text-rose-400" />
+              </div>
+              <p className="text-xl font-bold text-rose-700 dark:text-rose-300">
+                ${acc.expenses.toLocaleString()}
+              </p>
             </div>
           </div>
-          <p className="text-3xl font-bold text-emerald-700 dark:text-emerald-300" style={{ marginBottom: "6px" }}>
-            ${totalIncome.toLocaleString()}
-          </p>
-          <p className="text-xs text-emerald-600/70 dark:text-emerald-500">
-            {transactions.filter((t) => t.type === "income").length} transactions
-          </p>
         </div>
-
-        {/* Expenses */}
-        <div className="bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-800/30 rounded-2xl" style={{ padding: "20px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
-            <p className="text-sm font-semibold text-rose-700 dark:text-rose-400">Total Expenses</p>
-            <div style={{ padding: "6px", borderRadius: "8px" }} className="bg-rose-100 dark:bg-rose-800/40">
-              <ArrowDownRight size={16} className="text-rose-600 dark:text-rose-400" />
-            </div>
-          </div>
-          <p className="text-3xl font-bold text-rose-700 dark:text-rose-300" style={{ marginBottom: "6px" }}>
-            ${totalExpenses.toLocaleString()}
-          </p>
-          <p className="text-xs text-rose-600/70 dark:text-rose-500">
-            {transactions.filter((t) => t.type === "expense").length} transactions · {savingsRate.toFixed(1)}% saved
-          </p>
-        </div>
-      </div>
+      ))}
 
       {/* ── Category breakdown ───────────────────────── */}
       <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm" style={{ padding: "24px" }}>
