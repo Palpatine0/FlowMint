@@ -17,10 +17,12 @@ import {
 
 import { MainLayout } from "./components/layout/MainLayout";
 import { Dashboard } from "./pages/Dashboard";
+import { Accounts } from "./pages/Accounts";
 import { AddTransactionModal } from "./components/ui/AddTransactionModal";
 
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeNav, setActiveNav] = useState("Overview");
   const [editTransaction, setEditTransaction] = useState<Transaction | undefined>(undefined);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [activeRange, setActiveRange] = useState<FilterRange>("month");
@@ -74,22 +76,26 @@ export default function App() {
   };
 
   return (
-    <MainLayout onAddClick={() => setIsModalOpen(true)}>
-      <div className="mb-8">
-        <DateFilter
-          activeRange={activeRange}
-          onRangeChange={setActiveRange}
-          customDates={customDates}
-          onCustomChange={handleCustomChange}
-        />
-      </div>
-
-      <Dashboard
-        stats={stats}
-        transactions={filteredTransactions}
-        onDeleteTransaction={handleDeleteTransaction}
-        onEditTransaction={handleEditTransaction}
-      />
+    <MainLayout onAddClick={() => setIsModalOpen(true)} activeNav={activeNav} onNavChange={setActiveNav}>
+      {activeNav === "Overview" && (
+        <>
+          <div className="mb-8">
+            <DateFilter
+              activeRange={activeRange}
+              onRangeChange={setActiveRange}
+              customDates={customDates}
+              onCustomChange={handleCustomChange}
+            />
+          </div>
+          <Dashboard
+            stats={stats}
+            transactions={filteredTransactions}
+            onDeleteTransaction={handleDeleteTransaction}
+            onEditTransaction={handleEditTransaction}
+          />
+        </>
+      )}
+      {activeNav === "Accounts" && <Accounts transactions={transactions} />}
 
       <AddTransactionModal
         isOpen={isModalOpen}

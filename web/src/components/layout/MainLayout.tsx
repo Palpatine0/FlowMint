@@ -5,10 +5,11 @@ import { LayoutDashboard, Plus, Moon, Sun } from "lucide-react";
 interface MainLayoutProps {
   children: React.ReactNode;
   onAddClick: () => void;
+  activeNav: string;
+  onNavChange: (label: string) => void;
 }
 
-export function MainLayout({ children, onAddClick }: MainLayoutProps) {
-  const [activeNav, setActiveNav] = useState("Overview");
+export function MainLayout({ children, onAddClick, activeNav, onNavChange }: MainLayoutProps) {
   const [darkMode, setDarkMode] = useState(() =>
     document.documentElement.classList.contains("dark"),
   );
@@ -19,7 +20,7 @@ export function MainLayout({ children, onAddClick }: MainLayoutProps) {
 
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased">
-      <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
+      <Sidebar activeNav={activeNav} onNavChange={onNavChange} />
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header className="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-8 shrink-0">
           <div className="flex items-center gap-2">
