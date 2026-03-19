@@ -5,6 +5,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
 } from "recharts";
 import type { Transaction } from "../../types";
@@ -53,6 +54,13 @@ export function BalanceChart({ transactions }: Props) {
               border: "none",
               boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
             }}
+            formatter={(value) => [`$${Number(value).toLocaleString()}`, "Balance"]}
+          />
+          <Legend
+            iconType="circle"
+            iconSize={8}
+            formatter={() => "Account Balance"}
+            wrapperStyle={{ fontSize: "11px", paddingTop: "4px" }}
           />
           <Area
             type="monotone"
