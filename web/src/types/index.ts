@@ -41,3 +41,12 @@ export interface CustomDateRange {
   from: string;
   to: string;
 }
+
+export interface UserProfile {
+  name: string;
+  email: string;
+  avatarUrl: string;
+  defaultCurrency: string;
+  dateFormat: "MM/DD/YYYY" | "DD/MM/YYYY" | "YYYY-MM-DD";
+  theme: "light" | "dark" | "system";
+}
