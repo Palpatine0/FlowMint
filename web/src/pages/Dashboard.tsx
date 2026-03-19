@@ -4,6 +4,7 @@ import { TransactionList } from "../components/ui/TransactionList";
 import type { Transaction, DashboardStats } from "../types";
 import { useState, useRef, useEffect } from "react";
 import { BalanceChart } from "../components/ui/BalanceChart";
+import { CategoryChart } from "../components/ui/CategoryChart";
 
 interface DashboardProps {
   stats: DashboardStats;
@@ -144,6 +145,15 @@ export function Dashboard({
 
               <div className="flex-1 w-full min-h-0">
                 <BalanceChart transactions={transactions} />
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm h-[340px] flex flex-col">
+              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4">
+                Spending by Category
+              </h3>
+              <div className="flex-1 w-full min-h-0">
+                <CategoryChart transactions={transactions} />
               </div>
             </div>
           </div>
