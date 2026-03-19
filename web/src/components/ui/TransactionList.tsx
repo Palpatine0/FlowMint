@@ -1,4 +1,4 @@
-import { ArrowUpCircle, ArrowDownCircle, Trash2, Pencil } from "lucide-react";
+import { ArrowUpCircle, ArrowDownCircle, Trash2, Pencil, Download } from "lucide-react";
 import { useState } from "react";
 import {
   Dialog,
@@ -27,6 +27,25 @@ const CATEGORY_COLORS: Record<string, string> = {
   Other: "bg-slate-100 text-slate-700",
 };
 
+function exportCSV(transactions: Transaction[]) {
+  const header = ["Date", "Description", "Category", "Type", "Amount"];
+  const rows = transactions.map((tx) => [
+    new Date(tx.date).toLocaleDateString(),
+    `"${tx.description.replace(/"/g, '""')}"`,
+    tx.category,
+    tx.type,
+    tx.amount.toFixed(2),
+  ]);
+  const csv = [header, ...rows].map((r) => r.join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `flowmint-transactions-${new Date().toISOString().split("T")[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export function TransactionList({ transactions, onDelete, onEdit, emptyMessage = "No transactions yet. Add your first one!" }: Props) {
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
@@ -43,6 +62,14 @@ export function TransactionList({ transactions, onDelete, onEdit, emptyMessage =
         <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg">
           Recent Transactions
         </h3>
+        <button
+          onClick={() => exportCSV(transactions)}
+          disabled={transactions.length === 0}
+          className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-primary-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        >
+          <Download size={14} />
+          Export CSV
+        </button>
       </div>
 
       <div className="overflow-x-auto">
