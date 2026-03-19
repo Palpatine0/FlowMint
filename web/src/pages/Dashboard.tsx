@@ -1,12 +1,13 @@
 import { Wallet, TrendingUp, TrendingDown, Search, ChevronDown, Check } from "lucide-react";
 import { StatCard } from "../components/ui/StatCard";
 import { TransactionList } from "../components/ui/TransactionList";
-import type { Transaction, DashboardStats } from "../types";
+import type { Transaction, DashboardStats, FilterRange } from "../types";
 import { useState, useRef, useEffect } from "react";
 import { BalanceChart } from "../components/ui/BalanceChart";
 import { CategoryChart } from "../components/ui/CategoryChart";
 
 interface DashboardProps {
+  activeRange: FilterRange;
   stats: DashboardStats;
   transactions: Transaction[];
   onDeleteTransaction: (id: string) => void;
@@ -14,6 +15,7 @@ interface DashboardProps {
 }
 
 export function Dashboard({
+  activeRange,
   stats,
   transactions,
   onDeleteTransaction,
@@ -48,6 +50,19 @@ export function Dashboard({
     ? "No transactions match your search or filter."
     : "No transactions yet. Add your first one!";
 
+  const getPeriodLabel = () => {
+    switch (activeRange) {
+      case "week": return "Weekly";
+      case "month": return "Monthly";
+      case "year": return "Yearly";
+      case "all": return "All-Time";
+      case "custom": return "Period";
+      default: return "Monthly";
+    }
+  };
+
+  const periodLabel = getPeriodLabel();
+
   return (
     <div className="max-w-7xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -60,7 +75,7 @@ export function Dashboard({
           iconColor="bg-primary-400"
         />
         <StatCard
-          title="Monthly Income"
+          title={`${periodLabel} Income`}
           amount={`$${stats.income.toLocaleString()}`}
           change={`${stats.incomeChange.toFixed(1)}%`}
           isPositive={true}
@@ -68,7 +83,7 @@ export function Dashboard({
           iconColor="bg-emerald-600"
         />
         <StatCard
-          title="Monthly Expenses"
+          title={`${periodLabel} Expenses`}
           amount={`$${stats.expenses.toLocaleString()}`}
           change={`${stats.expensesChange.toFixed(1)}%`}
           isPositive={false}

@@ -5,7 +5,6 @@ import { DateFilter } from "./components/ui/DateFilter";
 import type {
   FilterRange,
   Transaction,
-  DashboardStats,
   CustomDateRange,
 } from "./types";
 import {
@@ -38,8 +37,8 @@ export default function App() {
   }, [transactions, activeRange, customDates]);
 
   const stats = useMemo(() => {
-    return calculateTotals(filteredTransactions);
-  }, [filteredTransactions]);
+    return calculateTotals(transactions, filteredTransactions, activeRange);
+  }, [transactions, filteredTransactions, activeRange]);
 
   useEffect(() => {
     const init = async () => {
@@ -89,6 +88,7 @@ export default function App() {
             />
           </div>
           <Dashboard
+            activeRange={activeRange}
             stats={stats}
             transactions={filteredTransactions}
             onDeleteTransaction={handleDeleteTransaction}

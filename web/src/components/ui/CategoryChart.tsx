@@ -47,7 +47,7 @@ export function CategoryChart({ transactions }: Props) {
           ))}
         </Pie>
         <Tooltip
-          formatter={(value: number) => [`$${value.toLocaleString()}`, "Amount"]}
+          formatter={(value: any) => [`$${Number(value).toLocaleString()}`, "Amount"]}
           contentStyle={{
             borderRadius: "12px",
             border: "none",

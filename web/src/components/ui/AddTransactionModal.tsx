@@ -20,17 +20,31 @@ const PRESET_CATEGORIES = [
   "Other",
 ];
 
-export function AddTransactionModal({ isOpen, onClose, onAdd, editTransaction }: Props) {
+export function AddTransactionModal({
+  isOpen,
+  onClose,
+  onAdd,
+  editTransaction,
+}: Props) {
   const isEdit = !!editTransaction;
   const isPreset = (cat: string) => PRESET_CATEGORIES.includes(cat);
 
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState(PRESET_CATEGORIES[0]);
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const getLocalDateString = (d: Date) => {
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+      .toISOString()
+      .split("T")[0];
+  };
+
+  const [date, setDate] = useState(getLocalDateString(new Date()));
   const [type, setType] = useState<TransactionType>("expense");
   const [customCategory, setCustomCategory] = useState("");
-  const [errors, setErrors] = useState<{ amount?: string; description?: string }>({});
+  const [errors, setErrors] = useState<{
+    amount?: string;
+    description?: string;
+  }>({});
   const amountRef = useRef<HTMLInputElement>(null);
 
   // Pre-fill form when editing
@@ -39,7 +53,7 @@ export function AddTransactionModal({ isOpen, onClose, onAdd, editTransaction }:
       setAmount(String(editTransaction.amount));
       setDescription(editTransaction.description);
       setType(editTransaction.type);
-      setDate(editTransaction.date.split("T")[0]);
+      setDate(getLocalDateString(new Date(editTransaction.date)));
       if (isPreset(editTransaction.category)) {
         setCategory(editTransaction.category);
         setCustomCategory("");
@@ -52,7 +66,7 @@ export function AddTransactionModal({ isOpen, onClose, onAdd, editTransaction }:
       setDescription("");
       setCategory(PRESET_CATEGORIES[0]);
       setCustomCategory("");
-      setDate(new Date().toISOString().split("T")[0]);
+      setDate(getLocalDateString(new Date()));
       setType("expense");
       setErrors({});
     }
@@ -80,8 +94,7 @@ export function AddTransactionModal({ isOpen, onClose, onAdd, editTransaction }:
     const newErrors: { amount?: string; description?: string } = {};
     if (!amount || parseFloat(amount) <= 0)
       newErrors.amount = "Amount must be greater than 0.";
-    if (!description.trim())
-      newErrors.description = "Description is required.";
+    if (!description.trim()) newErrors.description = "Description is required.";
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -95,7 +108,7 @@ export function AddTransactionModal({ isOpen, onClose, onAdd, editTransaction }:
       amount: parseFloat(amount),
       description,
       type,
-      date: new Date(date).toISOString(),
+      date: new Date(date + "T00:00:00").toISOString(),
       category: finalCategory || "Uncategorized",
     });
     onClose();
@@ -105,7 +118,9 @@ export function AddTransactionModal({ isOpen, onClose, onAdd, editTransaction }:
     <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md shadow-2xl">
         <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-700">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">{isEdit ? "Edit Transaction" : "Add Transaction"}</h2>
+          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+            {isEdit ? "Edit Transaction" : "Add Transaction"}
+          </h2>
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
@@ -123,11 +138,16 @@ export function AddTransactionModal({ isOpen, onClose, onAdd, editTransaction }:
               ref={amountRef}
               type="number"
               value={amount}
-              onChange={(e) => { setAmount(e.target.value); setErrors((p) => ({ ...p, amount: undefined })); }}
+              onChange={(e) => {
+                setAmount(e.target.value);
+                setErrors((p) => ({ ...p, amount: undefined }));
+              }}
               className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary-400 outline-none bg-white dark:bg-slate-700 dark:text-slate-100 ${errors.amount ? "border-rose-400" : "border-slate-200 dark:border-slate-600"}`}
               placeholder="0.00"
             />
-            {errors.amount && <p className="text-rose-500 text-xs mt-1">{errors.amount}</p>}
+            {errors.amount && (
+              <p className="text-rose-500 text-xs mt-1">{errors.amount}</p>
+            )}
           </div>
 
           <div>
@@ -137,11 +157,16 @@ export function AddTransactionModal({ isOpen, onClose, onAdd, editTransaction }:
             <input
               type="text"
               value={description}
-              onChange={(e) => { setDescription(e.target.value); setErrors((p) => ({ ...p, description: undefined })); }}
+              onChange={(e) => {
+                setDescription(e.target.value);
+                setErrors((p) => ({ ...p, description: undefined }));
+              }}
               className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary-400 outline-none bg-white dark:bg-slate-700 dark:text-slate-100 ${errors.description ? "border-rose-400" : "border-slate-200 dark:border-slate-600"}`}
               placeholder="e.g. Monthly Rent"
             />
-            {errors.description && <p className="text-rose-500 text-xs mt-1">{errors.description}</p>}
+            {errors.description && (
+              <p className="text-rose-500 text-xs mt-1">{errors.description}</p>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>

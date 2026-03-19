@@ -29,9 +29,8 @@ export function filterTransactions(
       );
     if (range === "year") return tDate.getFullYear() === now.getFullYear();
     if (range === "custom" && customDates?.from && customDates?.to) {
-      const from = new Date(customDates.from);
-      const to = new Date(customDates.to);
-      to.setHours(23, 59, 59, 999);
+      const from = new Date(customDates.from + "T00:00:00");
+      const to = new Date(customDates.to + "T23:59:59.999");
       return tDate >= from && tDate <= to;
     }
     return true;
@@ -47,33 +46,57 @@ export async function getTransactions(): Promise<Transaction[]> {
   return data ? JSON.parse(data) : [];
 }
 
-export function calculateTotals(transactions: Transaction[]): DashboardStats {
-  const now = new Date();
-  const thisMonth = now.getMonth();
-  const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1;
+export function calculateTotals(
+  allTransactions: Transaction[],
+  filteredTransactions: Transaction[],
+  activeRange: FilterRange
+): DashboardStats {
+  const totalBalance = allTransactions.reduce((sum, t) => {
+    return sum + (t.type === "income" ? t.amount : -t.amount);
+  }, 0);
 
-  const getStatsForMonth = (m: number, y: number) => {
-    const filtered = transactions.filter((t) => {
+  const inc = filteredTransactions
+    .filter((t) => t.type === "income")
+    .reduce((s, t) => s + t.amount, 0);
+
+  const exp = filteredTransactions
+    .filter((t) => t.type === "expense")
+    .reduce((s, t) => s + t.amount, 0);
+
+  let prevInc = 0;
+  let prevExp = 0;
+
+  if (activeRange === "month" || activeRange === "week" || activeRange === "year") {
+    const now = new Date();
+    const prevTransactions = allTransactions.filter((t) => {
       const d = new Date(t.date);
-      return d.getMonth() === m && d.getFullYear() === y;
+      if (activeRange === "month") {
+        const lastMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+        const year = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+        return d.getMonth() === lastMonth && d.getFullYear() === year;
+      }
+      if (activeRange === "year") {
+        return d.getFullYear() === now.getFullYear() - 1;
+      }
+      if (activeRange === "week") {
+        const startOfThisWeek = new Date(now);
+        startOfThisWeek.setDate(now.getDate() - now.getDay());
+        startOfThisWeek.setHours(0, 0, 0, 0);
+
+        const startOfLastWeek = new Date(startOfThisWeek);
+        startOfLastWeek.setDate(startOfThisWeek.getDate() - 7);
+
+        return d >= startOfLastWeek && d < startOfThisWeek;
+      }
+      return false;
     });
 
-    const inc = filtered
-      .filter((t) => t.type === "income")
-      .reduce((s, t) => s + t.amount, 0);
+    prevInc = prevTransactions.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
+    prevExp = prevTransactions.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
+  }
 
-    const exp = filtered
-      .filter((t) => t.type === "expense")
-      .reduce((s, t) => s + t.amount, 0);
-
-    return { inc, exp, bal: inc - exp };
-  };
-
-  const currentYear = now.getFullYear();
-  const previousYear = thisMonth === 0 ? currentYear - 1 : currentYear;
-
-  const current = getStatsForMonth(thisMonth, currentYear);
-  const previous = getStatsForMonth(lastMonth, previousYear);
+  const prevBal = prevInc - prevExp;
+  const currentBal = inc - exp;
 
   const calcChange = (curr: number, prev: number) => {
     if (prev === 0) return curr > 0 ? 100 : 0;
@@ -81,11 +104,11 @@ export function calculateTotals(transactions: Transaction[]): DashboardStats {
   };
 
   return {
-    balance: current.bal,
-    income: current.inc,
-    expenses: current.exp,
-    balanceChange: calcChange(current.bal, previous.bal),
-    incomeChange: calcChange(current.inc, previous.inc),
-    expensesChange: calcChange(current.exp, previous.exp),
+    balance: totalBalance,
+    income: inc,
+    expenses: exp,
+    balanceChange: calcChange(currentBal, prevBal),
+    incomeChange: calcChange(inc, prevInc),
+    expensesChange: calcChange(exp, prevExp),
   };
 }
