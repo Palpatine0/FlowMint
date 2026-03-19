@@ -117,10 +117,9 @@ export function TransactionList({ transactions, onDelete, onEdit, emptyMessage =
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        CATEGORY_COLORS[tx.category] ||
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${CATEGORY_COLORS[tx.category] ||
                         "bg-slate-100 text-slate-600"
-                      }`}
+                        }`}
                     >
                       {tx.category}
                     </span>
@@ -128,8 +127,14 @@ export function TransactionList({ transactions, onDelete, onEdit, emptyMessage =
                   <td
                     className={`px-6 py-4 text-right font-semibold ${tx.type === "income" ? "text-emerald-600" : "text-slate-900 dark:text-slate-100"}`}
                   >
-                    {tx.type === "income" ? "+" : "-"}$
-                    {tx.amount.toLocaleString()}
+                    <div>
+                      {tx.type === "income" ? "+" : "-"}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                    {tx.currency && tx.currency !== "USD" && (
+                      <div className="text-xs text-slate-400 font-normal mt-0.5">
+                        ({tx.originalAmount?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {tx.currency})
+                      </div>
+                    )}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-1">

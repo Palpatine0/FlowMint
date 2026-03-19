@@ -15,6 +15,8 @@ export interface Transaction {
   description: string;
   type: TransactionType;
   account?: string;
+  currency?: string;
+  originalAmount?: number;
 }
 
 export interface Category {
