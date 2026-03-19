@@ -18,7 +18,7 @@ A personal finance tracker built with React and TypeScript. Track income, expens
 
 ```bash
 cd web
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
