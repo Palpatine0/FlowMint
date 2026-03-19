@@ -15,6 +15,7 @@ const PRESET_CATEGORIES = [
   "Transport",
   "Utilities",
   "Entertainment",
+  "Salary",
   "Other",
 ];
 

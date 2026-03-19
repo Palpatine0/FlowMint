@@ -12,7 +12,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   Transport: "bg-cyan-100 text-cyan-700",
   Utilities: "bg-yellow-100 text-yellow-700",
   Entertainment: "bg-pink-100 text-pink-700",
-  Salary: "bg-emerald-100 text-emerald-700", // In case you add income categories
+  Salary: "bg-emerald-100 text-emerald-700",
   Other: "bg-slate-100 text-slate-700",
 };
 
