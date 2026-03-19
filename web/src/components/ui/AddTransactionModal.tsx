@@ -26,6 +26,7 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [type, setType] = useState<TransactionType>("expense");
   const [customCategory, setCustomCategory] = useState("");
+  const [errors, setErrors] = useState<{ amount?: string; description?: string }>({});
   const amountRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -47,6 +48,17 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const newErrors: { amount?: string; description?: string } = {};
+    if (!amount || parseFloat(amount) <= 0)
+      newErrors.amount = "Amount must be greater than 0.";
+    if (!description.trim())
+      newErrors.description = "Description is required.";
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
+
     const finalCategory = category === "Other" ? customCategory : category;
 
     onAdd({
@@ -63,6 +75,7 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
     setCategory(PRESET_CATEGORIES[0]);
     setCustomCategory("");
     setDate(new Date().toISOString().split("T")[0]);
+    setErrors({});
   };
 
   return (
@@ -86,12 +99,12 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
             <input
               ref={amountRef}
               type="number"
-              required
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-400 outline-none"
+              onChange={(e) => { setAmount(e.target.value); setErrors((p) => ({ ...p, amount: undefined })); }}
+              className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary-400 outline-none ${errors.amount ? "border-rose-400" : "border-slate-200"}`}
               placeholder="0.00"
             />
+            {errors.amount && <p className="text-rose-500 text-xs mt-1">{errors.amount}</p>}
           </div>
 
           <div>
@@ -101,10 +114,11 @@ export function AddTransactionModal({ isOpen, onClose, onAdd }: Props) {
             <input
               type="text"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-400 outline-none"
+              onChange={(e) => { setDescription(e.target.value); setErrors((p) => ({ ...p, description: undefined })); }}
+              className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary-400 outline-none ${errors.description ? "border-rose-400" : "border-slate-200"}`}
               placeholder="e.g. Monthly Rent"
             />
+            {errors.description && <p className="text-rose-500 text-xs mt-1">{errors.description}</p>}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
