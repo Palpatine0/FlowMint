@@ -1,12 +1,17 @@
 import React, { useState, useRef } from 'react';
 import { X, UploadCloud, AlertCircle } from 'lucide-react';
 import Papa from 'papaparse';
-import type { Transaction, TransactionType } from '../../types';
+import type {
+  Transaction,
+  TransactionType,
+  RecurringTransaction,
+  RecurringFrequency,
+} from '../../types';
 
 interface ImportModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onImport: (transactions: Transaction[]) => void;
+  onImport: (transactions: Transaction[], recurring: RecurringTransaction[]) => void;
   defaultCurrency?: string;
 }
 
@@ -45,6 +50,7 @@ export function ImportModal({
           }
 
           const newlyImported: Transaction[] = [];
+          const newlyImportedRecurring: RecurringTransaction[] = [];
 
           for (const row of parsed) {
             // Find keys regardless of case
@@ -60,6 +66,7 @@ export function ImportModal({
             const rawCat = getVal(['category', 'group']);
             const rawType = getVal(['type', 'transaction type']);
             const rawAcc = getVal(['account', 'bank', 'card']);
+            const rawFreq = getVal(['frequency', 'recurring', 'recurrence', 'repeat']);
 
             if (!rawDate || !rawAmount) {
               continue; // Skip invalid rows broadly
@@ -86,26 +93,46 @@ export function ImportModal({
               determinedType = 'income';
             }
 
-            newlyImported.push({
-              id: crypto.randomUUID(),
-              amount: parsedAmount,
-              originalAmount: parsedAmount,
-              currency: defaultCurrency,
-              date: dateObj.toISOString(),
-              description: rawDesc || 'Imported Transaction',
-              category: rawCat || 'Other',
-              type: determinedType,
-              account: rawAcc || 'Imported',
-            });
+            const cleanFreq = rawFreq.toLowerCase();
+            const validFrequencies = ['daily', 'weekly', 'monthly', 'yearly'];
+
+            if (validFrequencies.includes(cleanFreq)) {
+              newlyImportedRecurring.push({
+                id: crypto.randomUUID(),
+                amount: parsedAmount,
+                originalAmount: parsedAmount,
+                currency: defaultCurrency,
+                description: rawDesc || 'Imported Recurring',
+                category: rawCat || 'Other',
+                type: determinedType,
+                account: rawAcc || 'Imported',
+                frequency: cleanFreq as RecurringFrequency,
+                startDate: dateObj.toISOString(),
+                lastProcessedDate: null,
+                isActive: true,
+              });
+            } else {
+              newlyImported.push({
+                id: crypto.randomUUID(),
+                amount: parsedAmount,
+                originalAmount: parsedAmount,
+                currency: defaultCurrency,
+                date: dateObj.toISOString(),
+                description: rawDesc || 'Imported Transaction',
+                category: rawCat || 'Other',
+                type: determinedType,
+                account: rawAcc || 'Imported',
+              });
+            }
           }
 
-          if (newlyImported.length === 0) {
+          if (newlyImported.length === 0 && newlyImportedRecurring.length === 0) {
             throw new Error(
-              'No valid transactions were found. Make sure columns contain Date and Amount.',
+              'No valid standard or recurring transactions were found. Make sure columns contain Date and Amount.',
             );
           }
 
-          onImport(newlyImported);
+          onImport(newlyImported, newlyImportedRecurring);
           onClose();
         } catch (err: any) {
           setError(err.message || 'Failed to parse CSV file.');
@@ -148,7 +175,9 @@ export function ImportModal({
         <div className="p-6">
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
             Upload your bank statement as a `.csv` file. We look for columns like{' '}
-            <strong>Date</strong>, <strong>Amount</strong>, and <strong>Description</strong>.
+            <strong>Date</strong>, <strong>Amount</strong>, and <strong>Description</strong>. Add a{' '}
+            <strong>Frequency</strong> column (daily, weekly, monthly, yearly) to automatically
+            create Recurring Transactions!
           </p>
 
           <div

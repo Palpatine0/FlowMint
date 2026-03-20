@@ -102,12 +102,28 @@ export default function App() {
     });
   };
 
-  const handleImport = (importedTransactions: Transaction[]) => {
-    const finalTx = [...importedTransactions, ...transactions];
-    saveTransactions(finalTx);
-    setTransactions(finalTx);
+  const handleImport = (
+    importedTransactions: Transaction[],
+    importedRecurring: RecurringTransaction[] = [],
+  ) => {
+    let message = '';
+
+    if (importedTransactions.length > 0) {
+      const finalTx = [...importedTransactions, ...transactions];
+      saveTransactions(finalTx);
+      setTransactions(finalTx);
+      message += `${importedTransactions.length} transactions`;
+    }
+
+    if (importedRecurring.length > 0) {
+      const finalRec = [...importedRecurring, ...recurringTransactions];
+      saveRecurringTransactions(finalRec);
+      setRecurringTransactions(finalRec);
+      message += (message ? ' and ' : '') + `${importedRecurring.length} recurring items`;
+    }
+
     setToast({
-      message: `Successfully imported ${importedTransactions.length} transactions!`,
+      message: `Successfully imported ${message}!`,
       severity: 'success',
     });
   };
