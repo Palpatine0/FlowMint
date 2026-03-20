@@ -8,13 +8,15 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
-import type { Transaction } from "../../types";
+import type { Transaction, UserProfile } from "../../types";
+import { formatDate } from "../../utils/formatDate";
 
 interface Props {
   transactions: Transaction[];
   onDelete: (id: string) => void;
   onEdit: (tx: Transaction) => void;
   emptyMessage?: string;
+  dateFormat?: UserProfile["dateFormat"];
 }
 const CATEGORY_COLORS: Record<string, string> = {
   Rent: "bg-purple-100 text-purple-700",
@@ -27,10 +29,10 @@ const CATEGORY_COLORS: Record<string, string> = {
   Other: "bg-slate-100 text-slate-700",
 };
 
-function exportCSV(transactions: Transaction[]) {
+function exportCSV(transactions: Transaction[], dateFormat: UserProfile["dateFormat"]) {
   const header = ["Date", "Description", "Category", "Type", "Amount"];
   const rows = transactions.map((tx) => [
-    new Date(tx.date).toLocaleDateString(),
+    formatDate(tx.date, dateFormat),
     `"${tx.description.replace(/"/g, '""')}"`,
     tx.category,
     tx.type,
@@ -46,7 +48,7 @@ function exportCSV(transactions: Transaction[]) {
   URL.revokeObjectURL(url);
 }
 
-export function TransactionList({ transactions, onDelete, onEdit, emptyMessage = "No transactions yet. Add your first one!" }: Props) {
+export function TransactionList({ transactions, onDelete, onEdit, emptyMessage = "No transactions yet. Add your first one!", dateFormat = "MM/DD/YYYY" }: Props) {
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
   const handleDeleteClick = (id: string) => setConfirmId(id);
@@ -63,7 +65,7 @@ export function TransactionList({ transactions, onDelete, onEdit, emptyMessage =
           Recent Transactions
         </h3>
         <button
-          onClick={() => exportCSV(transactions)}
+          onClick={() => exportCSV(transactions, dateFormat)}
           disabled={transactions.length === 0}
           className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-primary-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
@@ -110,7 +112,7 @@ export function TransactionList({ transactions, onDelete, onEdit, emptyMessage =
                           {tx.description}
                         </p>
                         <p className="text-xs text-slate-400 dark:text-slate-500">
-                          {new Date(tx.date).toLocaleDateString()}
+                          {formatDate(tx.date, dateFormat)}
                         </p>
                       </div>
                     </div>

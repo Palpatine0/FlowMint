@@ -118,6 +118,7 @@ export default function App() {
             transactions={filteredTransactions}
             onDeleteTransaction={handleDeleteTransaction}
             onEditTransaction={handleEditTransaction}
+            dateFormat={profile.dateFormat}
           />
         </>
       )}

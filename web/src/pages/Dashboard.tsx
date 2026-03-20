@@ -1,7 +1,7 @@
 import { Wallet, TrendingUp, TrendingDown, Search, ChevronDown, Check } from "lucide-react";
 import { StatCard } from "../components/ui/StatCard";
 import { TransactionList } from "../components/ui/TransactionList";
-import type { Transaction, DashboardStats, FilterRange } from "../types";
+import type { Transaction, DashboardStats, FilterRange, UserProfile } from "../types";
 import { useState, useRef, useEffect } from "react";
 import { BalanceChart } from "../components/ui/BalanceChart";
 import { CategoryChart } from "../components/ui/CategoryChart";
@@ -13,6 +13,7 @@ interface DashboardProps {
   transactions: Transaction[];
   onDeleteTransaction: (id: string) => void;
   onEditTransaction: (tx: Transaction) => void;
+  dateFormat?: UserProfile["dateFormat"];
 }
 
 export function Dashboard({
@@ -21,6 +22,7 @@ export function Dashboard({
   transactions,
   onDeleteTransaction,
   onEditTransaction,
+  dateFormat = "MM/DD/YYYY",
 }: DashboardProps) {
   const [displayLimit, setDisplayLimit] = useState(5);
   const [search, setSearch] = useState("");
@@ -140,6 +142,7 @@ export function Dashboard({
               onDelete={onDeleteTransaction}
               onEdit={onEditTransaction}
               emptyMessage={emptyMessage}
+              dateFormat={dateFormat}
             />
           </div>
 
