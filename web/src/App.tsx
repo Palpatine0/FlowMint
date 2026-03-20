@@ -31,6 +31,7 @@ import { Recurring } from './pages/Recurring';
 import { CalendarView } from './pages/CalendarView';
 import { Goals } from './pages/Goals';
 import { Help } from './pages/Help';
+import { BankSync } from './pages/BankSync';
 import { AddTransactionModal } from './components/ui/AddTransactionModal';
 import { AddRecurringModal } from './components/ui/AddRecurringModal';
 import { AddGoalModal } from './components/ui/AddGoalModal';
@@ -153,6 +154,12 @@ export default function App() {
     saveTransactions(updatedTransactions);
     setTransactions(updatedTransactions);
     setToast({ message: 'Transaction deleted.', severity: 'error' });
+  };
+
+  const handleBankSync = (newTransactions: Transaction[]) => {
+    const updated = [...newTransactions, ...transactions];
+    saveTransactions(updated);
+    setTransactions(updated);
   };
 
   const handleCustomChange = (field: 'from' | 'to', value: string) => {
@@ -311,6 +318,7 @@ export default function App() {
           }}
         />
       )}
+      {activeNav === 'Bank synchronization' && <BankSync onSync={handleBankSync} />}
       {activeNav === 'Help' && <Help />}
 
       <AddTransactionModal
