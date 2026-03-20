@@ -17,6 +17,7 @@ export interface Transaction {
   account?: string;
   currency?: string;
   originalAmount?: number;
+  isRecurring?: boolean;
 }
 
 export type RecurringFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly';

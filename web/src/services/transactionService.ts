@@ -90,6 +90,7 @@ export function processRecurringTransactions(recurring: RecurringTransaction[]):
         account: rt.account,
         currency: rt.currency,
         originalAmount: rt.originalAmount,
+        isRecurring: true,
       };
 
       newTransactions.push(tx);
