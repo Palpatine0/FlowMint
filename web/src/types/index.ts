@@ -69,4 +69,12 @@ export interface UserProfile {
   defaultCurrency: string;
   dateFormat: 'MM/DD/YYYY' | 'DD/MM/YYYY' | 'YYYY-MM-DD';
   theme: 'light' | 'dark' | 'system';
+  geminiApiKey?: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
 }

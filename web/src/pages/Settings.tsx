@@ -269,6 +269,23 @@ export function Settings({ profile, onSave, onThemeChange }: Props) {
               ))}
             </div>
           </div>
+
+          {/* Gemini API Key */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Gemini API Key
+            </label>
+            <input
+              type="password"
+              value={draft.geminiApiKey || ''}
+              onChange={(e) => update('geminiApiKey', e.target.value)}
+              placeholder="AIzaSy..."
+              className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
+            />
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+              Used for the local AI assistant. Stored securely in your browser.
+            </p>
+          </div>
         </div>
       </div>
 

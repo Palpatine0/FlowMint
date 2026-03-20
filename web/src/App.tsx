@@ -35,6 +35,7 @@ import { AddRecurringModal } from './components/ui/AddRecurringModal';
 import { AddGoalModal } from './components/ui/AddGoalModal';
 import { FundGoalModal } from './components/ui/FundGoalModal';
 import { ImportModal } from './components/ui/ImportModal';
+import { ChatWidget } from './components/ui/ChatWidget';
 
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -358,6 +359,8 @@ export default function App() {
         onFund={handleFundGoalSubmit}
         goal={fundGoalTarget}
       />
+
+      <ChatWidget profile={profile} transactions={transactions} goals={goals} />
 
       <Snackbar
         open={toast !== null}
