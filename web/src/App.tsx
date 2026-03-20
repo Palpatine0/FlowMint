@@ -30,6 +30,7 @@ import { Settings } from './pages/Settings';
 import { Recurring } from './pages/Recurring';
 import { CalendarView } from './pages/CalendarView';
 import { Goals } from './pages/Goals';
+import { Help } from './pages/Help';
 import { AddTransactionModal } from './components/ui/AddTransactionModal';
 import { AddRecurringModal } from './components/ui/AddRecurringModal';
 import { AddGoalModal } from './components/ui/AddGoalModal';
@@ -310,6 +311,7 @@ export default function App() {
           }}
         />
       )}
+      {activeNav === 'Help' && <Help />}
 
       <AddTransactionModal
         isOpen={isModalOpen}

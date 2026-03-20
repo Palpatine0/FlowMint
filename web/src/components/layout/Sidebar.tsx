@@ -8,6 +8,8 @@ import {
   RefreshCw,
   Calendar as CalendarIcon,
   Target,
+  HelpCircle,
+  ExternalLink,
 } from 'lucide-react';
 import iconLogo from '../../assets/icon-logo.svg';
 
@@ -85,6 +87,16 @@ export function Sidebar({ activeNav, onNavChange, userName, avatarUrl }: Sidebar
           <span className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">
             {userName || 'User'}
           </span>
+        </button>
+        <button
+          onClick={() => onNavChange('Help')}
+          className="w-full flex items-center justify-between px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-primary-500 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors rounded-xl"
+        >
+          <div className="flex items-center gap-3">
+            <HelpCircle size={20} />
+            Help
+          </div>
+          <ExternalLink size={14} className="opacity-40" />
         </button>
         <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors rounded-xl">
           <LogOut size={20} />
