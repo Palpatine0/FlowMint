@@ -26,6 +26,7 @@ import { Accounts } from './pages/Accounts';
 import { Budgets } from './pages/Budgets';
 import { Settings } from './pages/Settings';
 import { Recurring } from './pages/Recurring';
+import { CalendarView } from './pages/CalendarView';
 import { AddTransactionModal } from './components/ui/AddTransactionModal';
 import { AddRecurringModal } from './components/ui/AddRecurringModal';
 
@@ -198,6 +199,7 @@ export default function App() {
       )}
       {activeNav === 'Accounts' && <Accounts transactions={transactions} />}
       {activeNav === 'Budgets' && <Budgets transactions={transactions} />}
+      {activeNav === 'Calendar' && <CalendarView transactions={transactions} />}
       {activeNav === 'Settings' && (
         <Settings
           profile={profile}
