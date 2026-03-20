@@ -1,4 +1,4 @@
-export type TransactionType = "income" | "expense";
+export type TransactionType = 'income' | 'expense';
 
 export interface Account {
   id: string;
@@ -35,7 +35,7 @@ export interface DashboardStats {
   expensesChange: number;
 }
 
-export type FilterRange = "week" | "month" | "year" | "all" | "custom";
+export type FilterRange = 'week' | 'month' | 'year' | 'all' | 'custom';
 
 export interface CustomDateRange {
   from: string;
@@ -47,6 +47,6 @@ export interface UserProfile {
   email: string;
   avatarUrl: string;
   defaultCurrency: string;
-  dateFormat: "MM/DD/YYYY" | "DD/MM/YYYY" | "YYYY-MM-DD";
-  theme: "light" | "dark" | "system";
+  dateFormat: 'MM/DD/YYYY' | 'DD/MM/YYYY' | 'YYYY-MM-DD';
+  theme: 'light' | 'dark' | 'system';
 }

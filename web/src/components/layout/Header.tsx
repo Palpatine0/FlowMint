@@ -1,4 +1,4 @@
-import { LayoutDashboard, Plus, Moon, Sun } from "lucide-react";
+import { LayoutDashboard, Plus, Moon, Sun } from 'lucide-react';
 
 interface HeaderProps {
   activeNav: string;

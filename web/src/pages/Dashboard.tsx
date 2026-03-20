@@ -1,11 +1,11 @@
-import { Wallet, TrendingUp, TrendingDown, Search, ChevronDown, Check } from "lucide-react";
-import { StatCard } from "../components/ui/StatCard";
-import { TransactionList } from "../components/ui/TransactionList";
-import type { Transaction, DashboardStats, FilterRange, UserProfile } from "../types";
-import { useState, useRef, useEffect } from "react";
-import { BalanceChart } from "../components/ui/BalanceChart";
-import { CategoryChart } from "../components/ui/CategoryChart";
-import { DailyBarChart } from "../components/ui/DailyBarChart";
+import { Wallet, TrendingUp, TrendingDown, Search, ChevronDown, Check } from 'lucide-react';
+import { StatCard } from '../components/ui/StatCard';
+import { TransactionList } from '../components/ui/TransactionList';
+import type { Transaction, DashboardStats, FilterRange, UserProfile } from '../types';
+import { useState, useRef, useEffect } from 'react';
+import { BalanceChart } from '../components/ui/BalanceChart';
+import { CategoryChart } from '../components/ui/CategoryChart';
+import { DailyBarChart } from '../components/ui/DailyBarChart';
 
 interface DashboardProps {
   activeRange: FilterRange;
@@ -13,7 +13,7 @@ interface DashboardProps {
   transactions: Transaction[];
   onDeleteTransaction: (id: string) => void;
   onEditTransaction: (tx: Transaction) => void;
-  dateFormat?: UserProfile["dateFormat"];
+  dateFormat?: UserProfile['dateFormat'];
 }
 
 export function Dashboard({
@@ -22,45 +22,51 @@ export function Dashboard({
   transactions,
   onDeleteTransaction,
   onEditTransaction,
-  dateFormat = "MM/DD/YYYY",
+  dateFormat = 'MM/DD/YYYY',
 }: DashboardProps) {
   const [displayLimit, setDisplayLimit] = useState(5);
-  const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [search, setSearch] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('All');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const categories = ["All", ...Array.from(new Set(transactions.map((tx) => tx.category))).sort()];
+  const categories = ['All', ...Array.from(new Set(transactions.map((tx) => tx.category))).sort()];
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node))
         setDropdownOpen(false);
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const sortedTransactions = [...transactions]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .filter((tx) => tx.description.toLowerCase().includes(search.toLowerCase()))
-    .filter((tx) => categoryFilter === "All" || tx.category === categoryFilter);
+    .filter((tx) => categoryFilter === 'All' || tx.category === categoryFilter);
 
   const visibleTransactions = sortedTransactions.slice(0, displayLimit);
   const hasMore = displayLimit < sortedTransactions.length;
-  const isFiltered = search.trim() !== "" || categoryFilter !== "All";
+  const isFiltered = search.trim() !== '' || categoryFilter !== 'All';
   const emptyMessage = isFiltered
-    ? "No transactions match your search or filter."
-    : "No transactions yet. Add your first one!";
+    ? 'No transactions match your search or filter.'
+    : 'No transactions yet. Add your first one!';
 
   const getPeriodLabel = () => {
     switch (activeRange) {
-      case "week": return "Weekly";
-      case "month": return "Monthly";
-      case "year": return "Yearly";
-      case "all": return "All-Time";
-      case "custom": return "Period";
-      default: return "Monthly";
+      case 'week':
+        return 'Weekly';
+      case 'month':
+        return 'Monthly';
+      case 'year':
+        return 'Yearly';
+      case 'all':
+        return 'All-Time';
+      case 'custom':
+        return 'Period';
+      default:
+        return 'Monthly';
     }
   };
 
@@ -106,7 +112,10 @@ export function Dashboard({
               <input
                 type="text"
                 value={search}
-                onChange={(e) => { setSearch(e.target.value); setDisplayLimit(5); }}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setDisplayLimit(5);
+                }}
                 placeholder="Search transactions..."
                 className="w-full pl-9 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-800 dark:text-slate-200 dark:placeholder-slate-500"
               />
@@ -117,14 +126,21 @@ export function Dashboard({
                 className="flex items-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-primary-400 focus:ring-2 focus:ring-primary-400 outline-none min-w-[130px] justify-between"
               >
                 <span>{categoryFilter}</span>
-                <ChevronDown size={14} className={`text-slate-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+                <ChevronDown
+                  size={14}
+                  className={`text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}
+                />
               </button>
               {dropdownOpen && (
                 <div className="absolute right-0 mt-1 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg z-20 overflow-hidden">
                   {categories.map((cat) => (
                     <button
                       key={cat}
-                      onClick={() => { setCategoryFilter(cat); setDisplayLimit(5); setDropdownOpen(false); }}
+                      onClick={() => {
+                        setCategoryFilter(cat);
+                        setDisplayLimit(5);
+                        setDropdownOpen(false);
+                      }}
                       className="flex items-center justify-between w-full px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-primary-50 dark:hover:bg-slate-700 hover:text-primary-600 transition-colors"
                     >
                       {cat}

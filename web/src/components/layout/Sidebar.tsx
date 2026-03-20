@@ -1,19 +1,12 @@
-import {
-  LayoutDashboard,
-  Wallet,
-  CreditCard,
-  PieChart,
-  Settings,
-  LogOut,
-} from "lucide-react";
-import iconLogo from "../../assets/icon-logo.svg";
+import { LayoutDashboard, Wallet, CreditCard, PieChart, Settings, LogOut } from 'lucide-react';
+import iconLogo from '../../assets/icon-logo.svg';
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Overview" },
-  { icon: Wallet, label: "Accounts" },
-  { icon: CreditCard, label: "Transactions" },
-  { icon: PieChart, label: "Budgets" },
-  { icon: Settings, label: "Settings" },
+  { icon: LayoutDashboard, label: 'Overview' },
+  { icon: Wallet, label: 'Accounts' },
+  { icon: CreditCard, label: 'Transactions' },
+  { icon: PieChart, label: 'Budgets' },
+  { icon: Settings, label: 'Settings' },
 ];
 
 interface SidebarProps {
@@ -24,10 +17,10 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeNav, onNavChange, userName, avatarUrl }: SidebarProps) {
-  const initials = (userName || "U")
-    .split(" ")
+  const initials = (userName || 'U')
+    .split(' ')
     .map((w) => w[0])
-    .join("")
+    .join('')
     .toUpperCase()
     .slice(0, 2);
   return (
@@ -46,8 +39,8 @@ export function Sidebar({ activeNav, onNavChange, userName, avatarUrl }: Sidebar
             onClick={() => onNavChange(item.label)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
               activeNav === item.label
-                ? "bg-primary-50 dark:bg-primary-900/30 text-primary-500 font-semibold"
-                : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
+                ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-500 font-semibold'
+                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >
             <item.icon size={20} />
@@ -58,20 +51,27 @@ export function Sidebar({ activeNav, onNavChange, userName, avatarUrl }: Sidebar
 
       <div className="p-4 border-t border-slate-100 dark:border-slate-700 space-y-2">
         <button
-          onClick={() => onNavChange("Settings")}
+          onClick={() => onNavChange('Settings')}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
         >
           {avatarUrl ? (
-            <img src={avatarUrl} alt="" className="w-8 h-8 rounded-full object-cover" style={{ border: "2px solid #76DDAA" }} />
+            <img
+              src={avatarUrl}
+              alt=""
+              className="w-8 h-8 rounded-full object-cover"
+              style={{ border: '2px solid #76DDAA' }}
+            />
           ) : (
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-              style={{ background: "linear-gradient(135deg, #76DDAA, #5BB88A)" }}
+              style={{ background: 'linear-gradient(135deg, #76DDAA, #5BB88A)' }}
             >
               {initials}
             </div>
           )}
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">{userName || "User"}</span>
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">
+            {userName || 'User'}
+          </span>
         </button>
         <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors rounded-xl">
           <LogOut size={20} />

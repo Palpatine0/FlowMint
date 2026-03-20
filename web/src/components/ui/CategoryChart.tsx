@@ -1,17 +1,23 @@
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import type { Transaction } from "../../types";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import type { Transaction } from '../../types';
 
 interface Props {
   transactions: Transaction[];
 }
 
 const COLORS = [
-  "#76DDAA", "#FF6584", "#6366f1", "#f59e0b",
-  "#06b6d4", "#ec4899", "#84cc16", "#f97316",
+  '#76DDAA',
+  '#FF6584',
+  '#6366f1',
+  '#f59e0b',
+  '#06b6d4',
+  '#ec4899',
+  '#84cc16',
+  '#f97316',
 ];
 
 export function CategoryChart({ transactions }: Props) {
-  const expenses = transactions.filter((tx) => tx.type === "expense");
+  const expenses = transactions.filter((tx) => tx.type === 'expense');
 
   const data = Object.entries(
     expenses.reduce<Record<string, number>>((acc, tx) => {
@@ -47,18 +53,18 @@ export function CategoryChart({ transactions }: Props) {
           ))}
         </Pie>
         <Tooltip
-          formatter={(value: any) => [`$${Number(value).toLocaleString()}`, "Amount"]}
+          formatter={(value: any) => [`$${Number(value).toLocaleString()}`, 'Amount']}
           contentStyle={{
-            borderRadius: "12px",
-            border: "none",
-            boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
-            fontSize: "12px",
+            borderRadius: '12px',
+            border: 'none',
+            boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+            fontSize: '12px',
           }}
         />
         <Legend
           iconType="circle"
           iconSize={8}
-          wrapperStyle={{ fontSize: "11px", paddingTop: "8px" }}
+          wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }}
         />
       </PieChart>
     </ResponsiveContainer>

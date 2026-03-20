@@ -7,8 +7,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
-import type { Transaction } from "../../types";
+} from 'recharts';
+import type { Transaction } from '../../types';
 
 interface Props {
   transactions: Transaction[];
@@ -19,12 +19,12 @@ export function BalanceChart({ transactions }: Props) {
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .reduce((acc: any[], curr) => {
       const lastBalance = acc.length > 0 ? acc[acc.length - 1].balance : 0;
-      const amount = curr.type === "income" ? curr.amount : -curr.amount;
+      const amount = curr.type === 'income' ? curr.amount : -curr.amount;
 
       acc.push({
-        date: new Date(curr.date).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
+        date: new Date(curr.date).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
         }),
         balance: lastBalance + amount,
       });
@@ -41,26 +41,22 @@ export function BalanceChart({ transactions }: Props) {
               <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid
-            strokeDasharray="3 3"
-            vertical={false}
-            stroke="#f1f5f9"
-          />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
           <XAxis dataKey="date" hide />
           <YAxis hide />
           <Tooltip
             contentStyle={{
-              borderRadius: "12px",
-              border: "none",
-              boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+              borderRadius: '12px',
+              border: 'none',
+              boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
             }}
-            formatter={(value) => [`$${Number(value).toLocaleString()}`, "Balance"]}
+            formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Balance']}
           />
           <Legend
             iconType="circle"
             iconSize={8}
-            formatter={() => "Account Balance"}
-            wrapperStyle={{ fontSize: "11px", paddingTop: "4px" }}
+            formatter={() => 'Account Balance'}
+            wrapperStyle={{ fontSize: '11px', paddingTop: '4px' }}
           />
           <Area
             type="monotone"

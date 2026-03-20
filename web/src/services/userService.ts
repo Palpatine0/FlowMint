@@ -1,14 +1,14 @@
-import type { UserProfile } from "../types";
+import type { UserProfile } from '../types';
 
-const STORAGE_KEY = "flowmint_user";
+const STORAGE_KEY = 'flowmint_user';
 
 const DEFAULT_PROFILE: UserProfile = {
-  name: "User",
-  email: "",
-  avatarUrl: "",
-  defaultCurrency: "USD",
-  dateFormat: "MM/DD/YYYY",
-  theme: "system",
+  name: 'User',
+  email: '',
+  avatarUrl: '',
+  defaultCurrency: 'USD',
+  dateFormat: 'MM/DD/YYYY',
+  theme: 'system',
 };
 
 export function getUserProfile(): UserProfile {

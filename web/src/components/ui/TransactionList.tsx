@@ -1,5 +1,5 @@
-import { ArrowUpCircle, ArrowDownCircle, Trash2, Pencil, Download } from "lucide-react";
-import { useState } from "react";
+import { ArrowUpCircle, ArrowDownCircle, Trash2, Pencil, Download } from 'lucide-react';
+import { useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -7,30 +7,30 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-} from "@mui/material";
-import type { Transaction, UserProfile } from "../../types";
-import { formatDate } from "../../utils/formatDate";
+} from '@mui/material';
+import type { Transaction, UserProfile } from '../../types';
+import { formatDate } from '../../utils/formatDate';
 
 interface Props {
   transactions: Transaction[];
   onDelete: (id: string) => void;
   onEdit: (tx: Transaction) => void;
   emptyMessage?: string;
-  dateFormat?: UserProfile["dateFormat"];
+  dateFormat?: UserProfile['dateFormat'];
 }
 const CATEGORY_COLORS: Record<string, string> = {
-  Rent: "bg-purple-100 text-purple-700",
-  Food: "bg-orange-100 text-orange-700",
-  Clothes: "bg-blue-100 text-blue-700",
-  Transport: "bg-cyan-100 text-cyan-700",
-  Utilities: "bg-yellow-100 text-yellow-700",
-  Entertainment: "bg-pink-100 text-pink-700",
-  Salary: "bg-emerald-100 text-emerald-700",
-  Other: "bg-slate-100 text-slate-700",
+  Rent: 'bg-purple-100 text-purple-700',
+  Food: 'bg-orange-100 text-orange-700',
+  Clothes: 'bg-blue-100 text-blue-700',
+  Transport: 'bg-cyan-100 text-cyan-700',
+  Utilities: 'bg-yellow-100 text-yellow-700',
+  Entertainment: 'bg-pink-100 text-pink-700',
+  Salary: 'bg-emerald-100 text-emerald-700',
+  Other: 'bg-slate-100 text-slate-700',
 };
 
-function exportCSV(transactions: Transaction[], dateFormat: UserProfile["dateFormat"]) {
-  const header = ["Date", "Description", "Category", "Type", "Amount"];
+function exportCSV(transactions: Transaction[], dateFormat: UserProfile['dateFormat']) {
+  const header = ['Date', 'Description', 'Category', 'Type', 'Amount'];
   const rows = transactions.map((tx) => [
     formatDate(tx.date, dateFormat),
     `"${tx.description.replace(/"/g, '""')}"`,
@@ -38,17 +38,23 @@ function exportCSV(transactions: Transaction[], dateFormat: UserProfile["dateFor
     tx.type,
     tx.amount.toFixed(2),
   ]);
-  const csv = [header, ...rows].map((r) => r.join(",")).join("\n");
-  const blob = new Blob([csv], { type: "text/csv" });
+  const csv = [header, ...rows].map((r) => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
+  const a = document.createElement('a');
   a.href = url;
-  a.download = `flowmint-transactions-${new Date().toISOString().split("T")[0]}.csv`;
+  a.download = `flowmint-transactions-${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 }
 
-export function TransactionList({ transactions, onDelete, onEdit, emptyMessage = "No transactions yet. Add your first one!", dateFormat = "MM/DD/YYYY" }: Props) {
+export function TransactionList({
+  transactions,
+  onDelete,
+  onEdit,
+  emptyMessage = 'No transactions yet. Add your first one!',
+  dateFormat = 'MM/DD/YYYY',
+}: Props) {
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
   const handleDeleteClick = (id: string) => setConfirmId(id);
@@ -87,10 +93,7 @@ export function TransactionList({ transactions, onDelete, onEdit, emptyMessage =
           <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
             {transactions.length === 0 ? (
               <tr>
-                <td
-                  colSpan={4}
-                  className="px-6 py-12 text-center text-slate-400"
-                >
+                <td colSpan={4} className="px-6 py-12 text-center text-slate-400">
                   {emptyMessage}
                 </td>
               </tr>
@@ -102,7 +105,7 @@ export function TransactionList({ transactions, onDelete, onEdit, emptyMessage =
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      {tx.type === "income" ? (
+                      {tx.type === 'income' ? (
                         <ArrowUpCircle className="text-emerald-500" size={20} />
                       ) : (
                         <ArrowDownCircle className="text-rose-500" size={20} />
@@ -119,22 +122,31 @@ export function TransactionList({ transactions, onDelete, onEdit, emptyMessage =
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${CATEGORY_COLORS[tx.category] ||
-                        "bg-slate-100 text-slate-600"
-                        }`}
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        CATEGORY_COLORS[tx.category] || 'bg-slate-100 text-slate-600'
+                      }`}
                     >
                       {tx.category}
                     </span>
                   </td>
                   <td
-                    className={`px-6 py-4 text-right font-semibold ${tx.type === "income" ? "text-emerald-600" : "text-slate-900 dark:text-slate-100"}`}
+                    className={`px-6 py-4 text-right font-semibold ${tx.type === 'income' ? 'text-emerald-600' : 'text-slate-900 dark:text-slate-100'}`}
                   >
                     <div>
-                      {tx.type === "income" ? "+" : "-"}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {tx.type === 'income' ? '+' : '-'}$
+                      {tx.amount.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
                     </div>
-                    {tx.currency && tx.currency !== "USD" && (
+                    {tx.currency && tx.currency !== 'USD' && (
                       <div className="text-xs text-slate-400 font-normal mt-0.5">
-                        ({tx.originalAmount?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {tx.currency})
+                        (
+                        {tx.originalAmount?.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}{' '}
+                        {tx.currency})
                       </div>
                     )}
                   </td>
@@ -165,8 +177,7 @@ export function TransactionList({ transactions, onDelete, onEdit, emptyMessage =
         <DialogTitle>Delete Transaction</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this transaction? This action cannot
-            be undone.
+            Are you sure you want to delete this transaction? This action cannot be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
