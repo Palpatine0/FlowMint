@@ -1,6 +1,12 @@
-import type { Transaction, DashboardStats, FilterRange, CustomDateRange } from '../types';
+import type {
+  Transaction,
+  DashboardStats,
+  FilterRange,
+  CustomDateRange,
+  RecurringTransaction,
+} from '../types';
 const STORAGE_KEY = 'finance_transactions';
-
+const STORAGE_KEY_RECURRING = 'finance_recurring_transactions';
 export function filterTransactions(
   transactions: Transaction[],
   range: FilterRange,
@@ -36,6 +42,73 @@ export function saveTransactions(transactions: Transaction[]): void {
 export async function getTransactions(): Promise<Transaction[]> {
   const data = localStorage.getItem(STORAGE_KEY);
   return data ? JSON.parse(data) : [];
+}
+
+export function saveRecurringTransactions(transactions: RecurringTransaction[]): void {
+  localStorage.setItem(STORAGE_KEY_RECURRING, JSON.stringify(transactions));
+}
+
+export async function getRecurringTransactions(): Promise<RecurringTransaction[]> {
+  const data = localStorage.getItem(STORAGE_KEY_RECURRING);
+  return data ? JSON.parse(data) : [];
+}
+
+export function processRecurringTransactions(recurring: RecurringTransaction[]): {
+  newTransactions: Transaction[];
+  updatedRecurring: RecurringTransaction[];
+} {
+  const newTransactions: Transaction[] = [];
+  const updatedRecurring = recurring.map((rt) => {
+    if (!rt.isActive) return rt;
+
+    const now = new Date();
+    now.setHours(23, 59, 59, 999);
+
+    const startDate = new Date(rt.startDate);
+    const lastProcessed = rt.lastProcessedDate ? new Date(rt.lastProcessedDate) : null;
+    const nextDate = lastProcessed ? new Date(lastProcessed) : new Date(startDate);
+
+    if (lastProcessed) {
+      if (rt.frequency === 'daily') nextDate.setDate(nextDate.getDate() + 1);
+      else if (rt.frequency === 'weekly') nextDate.setDate(nextDate.getDate() + 7);
+      else if (rt.frequency === 'monthly') nextDate.setMonth(nextDate.getMonth() + 1);
+      else if (rt.frequency === 'yearly') nextDate.setFullYear(nextDate.getFullYear() + 1);
+    }
+
+    let processed = false;
+    let currentLastProcessed = lastProcessed ? lastProcessed.toISOString() : null;
+
+    while (nextDate <= now) {
+      processed = true;
+      const tx: Transaction = {
+        id: crypto.randomUUID(),
+        amount: rt.amount,
+        category: rt.category,
+        date: nextDate.toISOString(),
+        description: rt.description,
+        type: rt.type,
+        account: rt.account,
+        currency: rt.currency,
+        originalAmount: rt.originalAmount,
+      };
+
+      newTransactions.push(tx);
+      currentLastProcessed = nextDate.toISOString();
+
+      if (rt.frequency === 'daily') nextDate.setDate(nextDate.getDate() + 1);
+      else if (rt.frequency === 'weekly') nextDate.setDate(nextDate.getDate() + 7);
+      else if (rt.frequency === 'monthly') nextDate.setMonth(nextDate.getMonth() + 1);
+      else if (rt.frequency === 'yearly') nextDate.setFullYear(nextDate.getFullYear() + 1);
+    }
+
+    if (processed) {
+      return { ...rt, lastProcessedDate: currentLastProcessed };
+    }
+
+    return rt;
+  });
+
+  return { newTransactions, updatedRecurring };
 }
 
 export function calculateTotals(

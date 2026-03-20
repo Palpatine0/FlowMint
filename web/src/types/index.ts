@@ -19,6 +19,15 @@ export interface Transaction {
   originalAmount?: number;
 }
 
+export type RecurringFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly';
+
+export interface RecurringTransaction extends Omit<Transaction, 'date'> {
+  frequency: RecurringFrequency;
+  startDate: string;
+  lastProcessedDate: string | null;
+  isActive: boolean;
+}
+
 export interface Category {
   id: string;
   name: string;

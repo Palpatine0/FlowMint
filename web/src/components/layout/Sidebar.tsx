@@ -1,4 +1,12 @@
-import { LayoutDashboard, Wallet, CreditCard, PieChart, Settings, LogOut } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Wallet,
+  CreditCard,
+  PieChart,
+  Settings,
+  LogOut,
+  RefreshCw,
+} from 'lucide-react';
 import iconLogo from '../../assets/icon-logo.svg';
 
 const menuItems = [
@@ -6,6 +14,7 @@ const menuItems = [
   { icon: Wallet, label: 'Accounts' },
   { icon: CreditCard, label: 'Transactions' },
   { icon: PieChart, label: 'Budgets' },
+  { icon: RefreshCw, label: 'Recurring' },
   { icon: Settings, label: 'Settings' },
 ];
 

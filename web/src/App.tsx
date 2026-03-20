@@ -2,12 +2,21 @@ import { useState, useEffect, useMemo } from 'react';
 import { Snackbar, Alert } from '@mui/material';
 import { DateFilter } from './components/ui/DateFilter';
 
-import type { FilterRange, Transaction, CustomDateRange, UserProfile } from './types';
+import type {
+  FilterRange,
+  Transaction,
+  CustomDateRange,
+  UserProfile,
+  RecurringTransaction,
+} from './types';
 import {
   calculateTotals,
   getTransactions,
   saveTransactions,
   filterTransactions,
+  getRecurringTransactions,
+  saveRecurringTransactions,
+  processRecurringTransactions,
 } from './services/transactionService';
 import { getUserProfile, saveUserProfile } from './services/userService';
 
@@ -16,13 +25,18 @@ import { Dashboard } from './pages/Dashboard';
 import { Accounts } from './pages/Accounts';
 import { Budgets } from './pages/Budgets';
 import { Settings } from './pages/Settings';
+import { Recurring } from './pages/Recurring';
 import { AddTransactionModal } from './components/ui/AddTransactionModal';
+import { AddRecurringModal } from './components/ui/AddRecurringModal';
 
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false);
   const [activeNav, setActiveNav] = useState('Overview');
   const [editTransaction, setEditTransaction] = useState<Transaction | undefined>(undefined);
+  const [editRecurring, setEditRecurring] = useState<RecurringTransaction | undefined>(undefined);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [recurringTransactions, setRecurringTransactions] = useState<RecurringTransaction[]>([]);
   const [activeRange, setActiveRange] = useState<FilterRange>('month');
   const [customDates, setCustomDates] = useState<CustomDateRange>({
     from: '',
@@ -52,8 +66,21 @@ export default function App() {
 
   useEffect(() => {
     const init = async () => {
-      const data = await getTransactions();
-      setTransactions(data);
+      const txData = await getTransactions();
+      const recData = await getRecurringTransactions();
+
+      const { newTransactions, updatedRecurring } = processRecurringTransactions(recData);
+
+      if (newTransactions.length > 0) {
+        const finalTx = [...newTransactions, ...txData];
+        saveTransactions(finalTx);
+        saveRecurringTransactions(updatedRecurring);
+        setTransactions(finalTx);
+        setRecurringTransactions(updatedRecurring);
+      } else {
+        setTransactions(txData);
+        setRecurringTransactions(recData);
+      }
     };
     init();
   }, []);
@@ -94,6 +121,41 @@ export default function App() {
     setToast({ message: 'Profile saved!', severity: 'success' });
   };
 
+  const handleRecurring = (newRec: RecurringTransaction) => {
+    const updated = editRecurring
+      ? recurringTransactions.map((tx) => (tx.id === newRec.id ? newRec : tx))
+      : [newRec, ...recurringTransactions];
+    saveRecurringTransactions(updated);
+    setRecurringTransactions(updated);
+    setIsRecurringModalOpen(false);
+    setEditRecurring(undefined);
+    setToast({
+      message: editRecurring ? 'Recurring item updated!' : 'Recurring item added!',
+      severity: 'success',
+    });
+  };
+
+  const handleEditRecurringItem = (tx: RecurringTransaction) => {
+    setEditRecurring(tx);
+    setIsRecurringModalOpen(true);
+  };
+
+  const handleDeleteRecurringItem = (id: string) => {
+    const updated = recurringTransactions.filter((tx) => tx.id !== id);
+    saveRecurringTransactions(updated);
+    setRecurringTransactions(updated);
+    setToast({ message: 'Recurring item deleted.', severity: 'error' });
+  };
+
+  const handleToggleRecurringActive = (id: string, currentlyActive: boolean) => {
+    const updated = recurringTransactions.map((tx) =>
+      tx.id === id ? { ...tx, isActive: !currentlyActive } : tx,
+    );
+    saveRecurringTransactions(updated);
+    setRecurringTransactions(updated);
+    setToast({ message: currentlyActive ? 'Paused' : 'Activated', severity: 'success' });
+  };
+
   const handleToggleDarkMode = () => {
     const next: UserProfile['theme'] = resolvedDark ? 'light' : 'dark';
     const updated = { ...profile, theme: next };
@@ -103,7 +165,10 @@ export default function App() {
 
   return (
     <MainLayout
-      onAddClick={() => setIsModalOpen(true)}
+      onAddClick={() => {
+        if (activeNav === 'Recurring') setIsRecurringModalOpen(true);
+        else setIsModalOpen(true);
+      }}
       activeNav={activeNav}
       onNavChange={setActiveNav}
       darkMode={resolvedDark}
@@ -144,6 +209,15 @@ export default function App() {
           }}
         />
       )}
+      {activeNav === 'Recurring' && (
+        <Recurring
+          recurringTransactions={recurringTransactions}
+          onDelete={handleDeleteRecurringItem}
+          onEdit={handleEditRecurringItem}
+          onToggleActive={handleToggleRecurringActive}
+          dateFormat={profile.dateFormat}
+        />
+      )}
 
       <AddTransactionModal
         isOpen={isModalOpen}
@@ -153,6 +227,17 @@ export default function App() {
         }}
         onAdd={handleTransaction}
         editTransaction={editTransaction}
+        defaultCurrency={profile.defaultCurrency}
+      />
+
+      <AddRecurringModal
+        isOpen={isRecurringModalOpen}
+        onClose={() => {
+          setIsRecurringModalOpen(false);
+          setEditRecurring(undefined);
+        }}
+        onAdd={handleRecurring}
+        editTransaction={editRecurring}
         defaultCurrency={profile.defaultCurrency}
       />
 
