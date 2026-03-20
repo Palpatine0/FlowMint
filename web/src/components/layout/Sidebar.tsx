@@ -12,6 +12,7 @@ import {
   ExternalLink,
   RotateCcw,
   PieChart as PieChartIcon,
+  Calculator,
 } from 'lucide-react';
 import iconLogo from '../../assets/icon-logo.svg';
 
@@ -24,6 +25,7 @@ const menuItems = [
   { icon: RefreshCw, label: 'Recurring' },
   { icon: Target, label: 'Goals' },
   { icon: PieChartIcon, label: 'Charts' },
+  { icon: Calculator, label: 'Tax Estimator' },
   { icon: RotateCcw, label: 'Bank synchronization' },
   { icon: Settings, label: 'Settings' },
 ];
