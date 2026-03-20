@@ -6,6 +6,7 @@ interface MainLayoutProps {
   onAddClick: () => void;
   activeNav: string;
   onNavChange: (label: string) => void;
+  onImportClick: () => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
   userName?: string;
@@ -17,6 +18,7 @@ export function MainLayout({
   onAddClick,
   activeNav,
   onNavChange,
+  onImportClick,
   darkMode,
   onToggleDarkMode,
   userName,
@@ -36,6 +38,7 @@ export function MainLayout({
           darkMode={darkMode}
           onToggleDarkMode={onToggleDarkMode}
           onAddClick={onAddClick}
+          onImportClick={onImportClick}
         />
         <main className="flex-1 overflow-y-auto p-8">
           <div className="max-w-7xl mx-auto">{children}</div>

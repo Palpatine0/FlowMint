@@ -29,10 +29,12 @@ import { Recurring } from './pages/Recurring';
 import { CalendarView } from './pages/CalendarView';
 import { AddTransactionModal } from './components/ui/AddTransactionModal';
 import { AddRecurringModal } from './components/ui/AddRecurringModal';
+import { ImportModal } from './components/ui/ImportModal';
 
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [activeNav, setActiveNav] = useState('Overview');
   const [editTransaction, setEditTransaction] = useState<Transaction | undefined>(undefined);
   const [editRecurring, setEditRecurring] = useState<RecurringTransaction | undefined>(undefined);
@@ -96,6 +98,16 @@ export default function App() {
     setEditTransaction(undefined);
     setToast({
       message: editTransaction ? 'Transaction updated!' : 'Transaction added successfully!',
+      severity: 'success',
+    });
+  };
+
+  const handleImport = (importedTransactions: Transaction[]) => {
+    const finalTx = [...importedTransactions, ...transactions];
+    saveTransactions(finalTx);
+    setTransactions(finalTx);
+    setToast({
+      message: `Successfully imported ${importedTransactions.length} transactions!`,
       severity: 'success',
     });
   };
@@ -170,6 +182,7 @@ export default function App() {
         if (activeNav === 'Recurring') setIsRecurringModalOpen(true);
         else setIsModalOpen(true);
       }}
+      onImportClick={() => setIsImportModalOpen(true)}
       activeNav={activeNav}
       onNavChange={setActiveNav}
       darkMode={resolvedDark}
@@ -240,6 +253,13 @@ export default function App() {
         }}
         onAdd={handleRecurring}
         editTransaction={editRecurring}
+        defaultCurrency={profile.defaultCurrency}
+      />
+
+      <ImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImport={handleImport}
         defaultCurrency={profile.defaultCurrency}
       />
 
