@@ -100,8 +100,13 @@ export function DailyBarChart({ transactions, activeRange }: Props) {
           <YAxis
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 12, fill: '#94a3b8' }}
-            tickFormatter={(value) => `$${value}`}
+            width={70}
+            tick={{ fontSize: 11, fill: '#64748b', fontWeight: 500 }}
+            tickFormatter={(value) => {
+              if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
+              if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
+              return `$${value}`;
+            }}
           />
           <Tooltip
             cursor={{ fill: 'transparent' }}

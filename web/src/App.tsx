@@ -32,6 +32,7 @@ import { CalendarView } from './pages/CalendarView';
 import { Goals } from './pages/Goals';
 import { Help } from './pages/Help';
 import { BankSync } from './pages/BankSync';
+import { Charts } from './pages/Charts';
 import { AddTransactionModal } from './components/ui/AddTransactionModal';
 import { AddRecurringModal } from './components/ui/AddRecurringModal';
 import { AddGoalModal } from './components/ui/AddGoalModal';
@@ -319,6 +320,7 @@ export default function App() {
         />
       )}
       {activeNav === 'Bank synchronization' && <BankSync onSync={handleBankSync} />}
+      {activeNav === 'Charts' && <Charts transactions={transactions} />}
       {activeNav === 'Help' && <Help />}
 
       <AddTransactionModal
