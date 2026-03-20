@@ -7,6 +7,7 @@ import {
   LogOut,
   RefreshCw,
   Calendar as CalendarIcon,
+  Target,
 } from 'lucide-react';
 import iconLogo from '../../assets/icon-logo.svg';
 
@@ -17,6 +18,7 @@ const menuItems = [
   { icon: PieChart, label: 'Budgets' },
   { icon: CalendarIcon, label: 'Calendar' },
   { icon: RefreshCw, label: 'Recurring' },
+  { icon: Target, label: 'Goals' },
   { icon: Settings, label: 'Settings' },
 ];
 
@@ -48,10 +50,11 @@ export function Sidebar({ activeNav, onNavChange, userName, avatarUrl }: Sidebar
           <button
             key={item.label}
             onClick={() => onNavChange(item.label)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${activeNav === item.label
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+              activeNav === item.label
                 ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-500 font-semibold'
                 : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100'
-              }`}
+            }`}
           >
             <item.icon size={20} />
             {item.label}

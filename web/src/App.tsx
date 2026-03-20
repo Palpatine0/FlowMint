@@ -8,6 +8,7 @@ import type {
   CustomDateRange,
   UserProfile,
   RecurringTransaction,
+  SavingsGoal,
 } from './types';
 import {
   calculateTotals,
@@ -19,6 +20,7 @@ import {
   processRecurringTransactions,
 } from './services/transactionService';
 import { getUserProfile, saveUserProfile } from './services/userService';
+import { getSavingsGoals, saveSavingsGoals } from './services/goalService';
 
 import { MainLayout } from './components/layout/MainLayout';
 import { Dashboard } from './pages/Dashboard';
@@ -27,8 +29,11 @@ import { Budgets } from './pages/Budgets';
 import { Settings } from './pages/Settings';
 import { Recurring } from './pages/Recurring';
 import { CalendarView } from './pages/CalendarView';
+import { Goals } from './pages/Goals';
 import { AddTransactionModal } from './components/ui/AddTransactionModal';
 import { AddRecurringModal } from './components/ui/AddRecurringModal';
+import { AddGoalModal } from './components/ui/AddGoalModal';
+import { FundGoalModal } from './components/ui/FundGoalModal';
 import { ImportModal } from './components/ui/ImportModal';
 
 export default function App() {
@@ -40,6 +45,12 @@ export default function App() {
   const [editRecurring, setEditRecurring] = useState<RecurringTransaction | undefined>(undefined);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [recurringTransactions, setRecurringTransactions] = useState<RecurringTransaction[]>([]);
+  const [goals, setGoals] = useState<SavingsGoal[]>([]);
+  const [isAddGoalModalOpen, setIsAddGoalModalOpen] = useState(false);
+  const [isFundGoalModalOpen, setIsFundGoalModalOpen] = useState(false);
+  const [editGoal, setEditGoal] = useState<SavingsGoal | undefined>(undefined);
+  const [fundGoalTarget, setFundGoalTarget] = useState<SavingsGoal | null>(null);
+
   const [activeRange, setActiveRange] = useState<FilterRange>('month');
   const [customDates, setCustomDates] = useState<CustomDateRange>({
     from: '',
@@ -71,6 +82,8 @@ export default function App() {
     const init = async () => {
       const txData = await getTransactions();
       const recData = await getRecurringTransactions();
+      const goalData = await getSavingsGoals();
+      setGoals(goalData);
 
       const { newTransactions, updatedRecurring } = processRecurringTransactions(recData);
 
@@ -185,6 +198,38 @@ export default function App() {
     setToast({ message: currentlyActive ? 'Paused' : 'Activated', severity: 'success' });
   };
 
+  const handleSaveGoal = (goal: SavingsGoal) => {
+    const updated = editGoal ? goals.map((g) => (g.id === goal.id ? goal : g)) : [...goals, goal];
+    saveSavingsGoals(updated);
+    setGoals(updated);
+    setIsAddGoalModalOpen(false);
+    setEditGoal(undefined);
+    setToast({ message: editGoal ? 'Goal updated!' : 'Goal created!', severity: 'success' });
+  };
+
+  const handleDeleteGoal = (id: string) => {
+    const updated = goals.filter((g) => g.id !== id);
+    saveSavingsGoals(updated);
+    setGoals(updated);
+    setToast({ message: 'Goal deleted.', severity: 'error' });
+  };
+
+  const handleFundGoalSubmit = (goalId: string, amount: number, isWithdrawal: boolean) => {
+    const updated = goals.map((g) => {
+      if (g.id === goalId) {
+        let newAmount = g.currentAmount + (isWithdrawal ? -amount : amount);
+        newAmount = Math.max(0, newAmount); // Prevent negative current amount
+        return { ...g, currentAmount: newAmount };
+      }
+      return g;
+    });
+    saveSavingsGoals(updated);
+    setGoals(updated);
+    setIsFundGoalModalOpen(false);
+    setFundGoalTarget(null);
+    setToast({ message: isWithdrawal ? 'Funds withdrawn.' : 'Funds added!', severity: 'success' });
+  };
+
   const handleToggleDarkMode = () => {
     const next: UserProfile['theme'] = resolvedDark ? 'light' : 'dark';
     const updated = { ...profile, theme: next };
@@ -249,6 +294,21 @@ export default function App() {
           dateFormat={profile.dateFormat}
         />
       )}
+      {activeNav === 'Goals' && (
+        <Goals
+          goals={goals}
+          onAdd={() => setIsAddGoalModalOpen(true)}
+          onEdit={(g) => {
+            setEditGoal(g);
+            setIsAddGoalModalOpen(true);
+          }}
+          onDelete={handleDeleteGoal}
+          onFund={(g) => {
+            setFundGoalTarget(g);
+            setIsFundGoalModalOpen(true);
+          }}
+        />
+      )}
 
       <AddTransactionModal
         isOpen={isModalOpen}
@@ -277,6 +337,26 @@ export default function App() {
         onClose={() => setIsImportModalOpen(false)}
         onImport={handleImport}
         defaultCurrency={profile.defaultCurrency}
+      />
+
+      <AddGoalModal
+        isOpen={isAddGoalModalOpen}
+        onClose={() => {
+          setIsAddGoalModalOpen(false);
+          setEditGoal(undefined);
+        }}
+        onSave={handleSaveGoal}
+        editGoal={editGoal}
+      />
+
+      <FundGoalModal
+        isOpen={isFundGoalModalOpen}
+        onClose={() => {
+          setIsFundGoalModalOpen(false);
+          setFundGoalTarget(null);
+        }}
+        onFund={handleFundGoalSubmit}
+        goal={fundGoalTarget}
       />
 
       <Snackbar

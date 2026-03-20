@@ -22,6 +22,16 @@ export interface Transaction {
 
 export type RecurringFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
+export interface SavingsGoal {
+  id: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  deadline?: string; // ISO date string
+  color: string;
+  icon: string;
+}
+
 export interface RecurringTransaction extends Omit<Transaction, 'date'> {
   frequency: RecurringFrequency;
   startDate: string;
