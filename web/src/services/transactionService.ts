@@ -127,7 +127,7 @@ export function calculateTotals(
 
   const exp = filteredTransactions
     .filter((t) => t.type === 'expense')
-    .reduce((s, t) => s + t.amount, 0);
+    .reduce((s, t) => s + (t.amount - (t.splitAmount || 0)), 0);
 
   let prevInc = 0;
   let prevExp = 0;
@@ -160,7 +160,7 @@ export function calculateTotals(
     prevInc = prevTransactions.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0);
     prevExp = prevTransactions
       .filter((t) => t.type === 'expense')
-      .reduce((s, t) => s + t.amount, 0);
+      .reduce((s, t) => s + (t.amount - (t.splitAmount || 0)), 0);
   }
 
   const prevBal = prevInc - prevExp;
@@ -179,4 +179,21 @@ export function calculateTotals(
     incomeChange: calcChange(inc, prevInc),
     expensesChange: calcChange(exp, prevExp),
   };
+}
+
+export interface SharedBalance {
+  person: string;
+  amount: number;
+}
+
+export function getSharedBalances(transactions: Transaction[]): SharedBalance[] {
+  const balances: Record<string, number> = {};
+  transactions.forEach((t) => {
+    if (t.splitWith && t.splitAmount && !t.splitSettled) {
+      balances[t.splitWith] = (balances[t.splitWith] || 0) + t.splitAmount;
+    }
+  });
+  return Object.entries(balances)
+    .map(([person, amount]) => ({ person, amount }))
+    .sort((a, b) => b.amount - a.amount);
 }

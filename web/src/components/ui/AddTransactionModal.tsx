@@ -46,6 +46,9 @@ export function AddTransactionModal({
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState(PRESET_CATEGORIES[0]);
+  const [splitWith, setSplitWith] = useState('');
+  const [splitAmount, setSplitAmount] = useState('');
+  const [isSplit, setIsSplit] = useState(false);
   const getLocalDateString = (d: Date) => {
     return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
   };
@@ -77,6 +80,15 @@ export function AddTransactionModal({
       }
       setAccount(editTransaction.account || PRESET_ACCOUNTS[0]);
       setCurrency(editTransaction.currency || defaultCurrency);
+      if (editTransaction.splitWith || editTransaction.splitAmount) {
+        setIsSplit(true);
+        setSplitWith(editTransaction.splitWith || '');
+        setSplitAmount(editTransaction.splitAmount ? String(editTransaction.splitAmount) : '');
+      } else {
+        setIsSplit(false);
+        setSplitWith('');
+        setSplitAmount('');
+      }
     } else if (isOpen && !editTransaction) {
       setAmount('');
       setDescription('');
@@ -87,6 +99,9 @@ export function AddTransactionModal({
       setDate(getLocalDateString(new Date()));
       setType('expense');
       setErrors({});
+      setIsSplit(false);
+      setSplitWith('');
+      setSplitAmount('');
     }
   }, [isOpen, editTransaction]);
 
@@ -124,6 +139,9 @@ export function AddTransactionModal({
     const rate = EXCHANGE_RATES[currency] || 1;
     const baseAmountValue = currency === 'USD' ? typedAmount : typedAmount * rate;
 
+    const finalSplitAmount = isSplit && splitAmount ? parseFloat(splitAmount) : undefined;
+    const finalSplitWith = isSplit && splitWith.trim() ? splitWith.trim() : undefined;
+
     onAdd({
       id: editTransaction ? editTransaction.id : crypto.randomUUID(),
       amount: baseAmountValue,
@@ -134,6 +152,8 @@ export function AddTransactionModal({
       date: new Date(date + 'T00:00:00').toISOString(),
       category: finalCategory || 'Uncategorized',
       account: account,
+      splitWith: finalSplitWith,
+      splitAmount: finalSplitAmount,
     });
     onClose();
   };
@@ -266,6 +286,51 @@ export function AddTransactionModal({
                 onChange={(e) => setCustomCategory(e.target.value)}
                 className="w-full px-4 py-2 border border-primary-200 dark:border-slate-600 bg-primary-50/30 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-primary-400 outline-none"
               />
+            </div>
+          )}
+
+          {type === 'expense' && (
+            <div className="animate-in fade-in slide-in-from-top-1 duration-200 bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isSplit}
+                  onChange={(e) => setIsSplit(e.target.checked)}
+                  className="w-4 h-4 rounded text-primary-500 focus:ring-primary-400"
+                />
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  Split this expense
+                </span>
+              </label>
+
+              {isSplit && (
+                <div className="flex gap-4 mt-3 animate-in fade-in zoom-in duration-200">
+                  <div className="flex-1">
+                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                      Who owes you?
+                    </label>
+                    <input
+                      type="text"
+                      value={splitWith}
+                      onChange={(e) => setSplitWith(e.target.value)}
+                      placeholder="e.g. Sarah"
+                      className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
+                    />
+                  </div>
+                  <div className="w-1/3">
+                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                      Amount
+                    </label>
+                    <input
+                      type="number"
+                      value={splitAmount}
+                      onChange={(e) => setSplitAmount(e.target.value)}
+                      placeholder="0.00"
+                      className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
           <div className="flex gap-4">

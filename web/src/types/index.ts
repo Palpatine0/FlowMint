@@ -18,6 +18,9 @@ export interface Transaction {
   currency?: string;
   originalAmount?: number;
   isRecurring?: boolean;
+  splitWith?: string;
+  splitAmount?: number;
+  splitSettled?: boolean;
 }
 
 export type RecurringFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly';

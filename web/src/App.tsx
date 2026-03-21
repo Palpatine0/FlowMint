@@ -34,6 +34,7 @@ import { Help } from './pages/Help';
 import { BankSync } from './pages/BankSync';
 import { Charts } from './pages/Charts';
 import { TaxEstimator } from './pages/TaxEstimator';
+import { SharedExpenses } from './pages/SharedExpenses';
 import { AddTransactionModal } from './components/ui/AddTransactionModal';
 import { AddRecurringModal } from './components/ui/AddRecurringModal';
 import { AddGoalModal } from './components/ui/AddGoalModal';
@@ -241,6 +242,18 @@ export default function App() {
     setToast({ message: isWithdrawal ? 'Funds withdrawn.' : 'Funds added!', severity: 'success' });
   };
 
+  const handleSettleUp = (personName: string) => {
+    const updated = transactions.map((tx) => {
+      if (tx.splitWith === personName && !tx.splitSettled) {
+        return { ...tx, splitSettled: true };
+      }
+      return tx;
+    });
+    saveTransactions(updated);
+    setTransactions(updated);
+    setToast({ message: `${personName}'s expenses have been settled!`, severity: 'success' });
+  };
+
   const handleToggleDarkMode = () => {
     const next: UserProfile['theme'] = resolvedDark ? 'light' : 'dark';
     const updated = { ...profile, theme: next };
@@ -323,6 +336,13 @@ export default function App() {
       {activeNav === 'Bank synchronization' && <BankSync onSync={handleBankSync} />}
       {activeNav === 'Charts' && <Charts transactions={transactions} />}
       {activeNav === 'Tax Estimator' && <TaxEstimator transactions={transactions} />}
+      {activeNav === 'Shared Expenses' && (
+        <SharedExpenses
+          transactions={transactions}
+          onSettleUp={handleSettleUp}
+          defaultCurrency={profile.defaultCurrency}
+        />
+      )}
       {activeNav === 'Help' && <Help />}
 
       <AddTransactionModal

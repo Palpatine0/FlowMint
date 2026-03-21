@@ -13,6 +13,7 @@ import {
   RotateCcw,
   PieChart as PieChartIcon,
   Calculator,
+  Users,
 } from 'lucide-react';
 import iconLogo from '../../assets/icon-logo.svg';
 
@@ -26,6 +27,7 @@ const menuItems = [
   { icon: Target, label: 'Goals' },
   { icon: PieChartIcon, label: 'Charts' },
   { icon: Calculator, label: 'Tax Estimator' },
+  { icon: Users, label: 'Shared Expenses' },
   { icon: RotateCcw, label: 'Bank synchronization' },
   { icon: Settings, label: 'Settings' },
 ];
