@@ -36,6 +36,7 @@ import { BankSync } from './pages/BankSync';
 import { Charts } from './pages/Charts';
 import { TaxEstimator } from './pages/TaxEstimator';
 import { SharedExpenses } from './pages/SharedExpenses';
+import { Transactions } from './pages/Transactions';
 import { AddTransactionModal } from './components/ui/AddTransactionModal';
 import { AddRecurringModal } from './components/ui/AddRecurringModal';
 import { AddGoalModal } from './components/ui/AddGoalModal';
@@ -298,6 +299,14 @@ export default function App() {
         </>
       )}
       {activeNav === 'Accounts' && <Accounts transactions={transactions} />}
+      {activeNav === 'Transactions' && (
+        <Transactions
+          transactions={transactions}
+          onDelete={handleDeleteTransaction}
+          onEdit={handleEditTransaction}
+          dateFormat={profile.dateFormat}
+        />
+      )}
       {activeNav === 'Budgets' && <Budgets transactions={transactions} />}
       {activeNav === 'Calendar' && <CalendarView transactions={transactions} />}
       {activeNav === 'Settings' && (
