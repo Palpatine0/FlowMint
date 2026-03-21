@@ -333,7 +333,7 @@ export default function App() {
           }}
         />
       )}
-      {activeNav === 'Bank synchronization' && <BankSync onSync={handleBankSync} />}
+      {activeNav === 'Bank Sync' && <BankSync onSync={handleBankSync} />}
       {activeNav === 'Charts' && <Charts transactions={transactions} />}
       {activeNav === 'Tax Estimator' && <TaxEstimator transactions={transactions} />}
       {activeNav === 'Shared Expenses' && (

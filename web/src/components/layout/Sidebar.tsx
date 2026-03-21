@@ -28,7 +28,7 @@ const menuItems = [
   { icon: PieChartIcon, label: 'Charts' },
   { icon: Calculator, label: 'Tax Estimator' },
   { icon: Users, label: 'Shared Expenses' },
-  { icon: RotateCcw, label: 'Bank synchronization' },
+  { icon: RotateCcw, label: 'Bank Sync' },
   { icon: Settings, label: 'Settings' },
 ];
 
