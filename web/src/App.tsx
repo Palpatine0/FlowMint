@@ -18,6 +18,7 @@ import {
   getRecurringTransactions,
   saveRecurringTransactions,
   processRecurringTransactions,
+  getSharedBalances,
 } from './services/transactionService';
 import { getUserProfile, saveUserProfile } from './services/userService';
 import { getSavingsGoals, saveSavingsGoals } from './services/goalService';
@@ -274,6 +275,7 @@ export default function App() {
       onToggleDarkMode={handleToggleDarkMode}
       userName={profile.name}
       avatarUrl={profile.avatarUrl}
+      badges={{ 'Shared Expenses': getSharedBalances(transactions).length || 0 }}
     >
       {activeNav === 'Overview' && (
         <>

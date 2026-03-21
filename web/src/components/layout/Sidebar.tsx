@@ -37,9 +37,16 @@ interface SidebarProps {
   onNavChange: (label: string) => void;
   userName?: string;
   avatarUrl?: string;
+  badges?: Record<string, number>;
 }
 
-export function Sidebar({ activeNav, onNavChange, userName, avatarUrl }: SidebarProps) {
+export function Sidebar({
+  activeNav,
+  onNavChange,
+  userName,
+  avatarUrl,
+  badges = {},
+}: SidebarProps) {
   const initials = (userName || 'U')
     .split(' ')
     .map((w) => w[0])
@@ -67,7 +74,12 @@ export function Sidebar({ activeNav, onNavChange, userName, avatarUrl }: Sidebar
             }`}
           >
             <item.icon size={20} />
-            {item.label}
+            <span className="flex-1 text-left">{item.label}</span>
+            {badges[item.label] ? (
+              <span className="ml-auto text-[10px] font-bold bg-rose-500 text-white rounded-full w-5 h-5 flex items-center justify-center shrink-0">
+                {badges[item.label]}
+              </span>
+            ) : null}
           </button>
         ))}
       </nav>

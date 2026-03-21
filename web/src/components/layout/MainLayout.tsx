@@ -11,6 +11,7 @@ interface MainLayoutProps {
   onToggleDarkMode: () => void;
   userName?: string;
   avatarUrl?: string;
+  badges?: Record<string, number>;
 }
 
 export function MainLayout({
@@ -23,6 +24,7 @@ export function MainLayout({
   onToggleDarkMode,
   userName,
   avatarUrl,
+  badges,
 }: MainLayoutProps) {
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased">
@@ -31,6 +33,7 @@ export function MainLayout({
         onNavChange={onNavChange}
         userName={userName}
         avatarUrl={avatarUrl}
+        badges={badges}
       />
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Header
