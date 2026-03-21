@@ -5,6 +5,7 @@ import type { Transaction, DashboardStats, FilterRange, UserProfile } from '../t
 import { useState, useRef, useEffect } from 'react';
 import { BalanceChart } from '../components/ui/BalanceChart';
 import { CategoryChart } from '../components/ui/CategoryChart';
+import { SpendingAlerts } from '../components/ui/SpendingAlerts';
 
 interface DashboardProps {
   activeRange: FilterRange;
@@ -73,6 +74,7 @@ export function Dashboard({
 
   return (
     <div className="max-w-7xl mx-auto">
+      <SpendingAlerts transactions={transactions} />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard
           title="Total Balance"
