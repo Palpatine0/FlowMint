@@ -1,4 +1,5 @@
-import { Users, CheckCircle2 } from 'lucide-react';
+import { useState } from 'react';
+import { Users, CheckCircle2, Copy, Check, Share2 } from 'lucide-react';
 import { getSharedBalances } from '../services/transactionService';
 import type { Transaction } from '../types';
 
@@ -10,6 +11,7 @@ interface SharedExpensesProps {
 
 export function SharedExpenses({ transactions, onSettleUp, defaultCurrency }: SharedExpensesProps) {
   const balances = getSharedBalances(transactions);
+  const [copiedPerson, setCopiedPerson] = useState<string | null>(null);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -17,6 +19,39 @@ export function SharedExpenses({ transactions, onSettleUp, defaultCurrency }: Sh
       currency: defaultCurrency || 'USD',
     }).format(amount);
   };
+
+  const handleCopySummary = (personName: string) => {
+    const personTxs = transactions.filter(
+      (t) => t.splitWith === personName && !t.splitSettled && t.splitAmount,
+    );
+
+    const lines = personTxs
+      .map((t) => `  • ${t.description} — ${formatCurrency(t.splitAmount!)}`)
+      .join('\n');
+
+    const total = personTxs.reduce((sum, t) => sum + (t.splitAmount || 0), 0);
+
+    const message = `Hey ${personName}! 👋 Here's a summary of what we split:\n\n${lines}\n\nTotal you owe me: ${formatCurrency(total)}\n\nThanks! 🙏`;
+
+    navigator.clipboard.writeText(message).then(() => {
+      setCopiedPerson(personName);
+      setTimeout(() => setCopiedPerson(null), 2500);
+    });
+  };
+
+  const handleShare = (personName: string) => {
+    const personTxs = transactions.filter(
+      (t) => t.splitWith === personName && !t.splitSettled && t.splitAmount,
+    );
+    const lines = personTxs
+      .map((t) => `  • ${t.description} — ${formatCurrency(t.splitAmount!)}`)
+      .join('\n');
+    const total = personTxs.reduce((sum, t) => sum + (t.splitAmount || 0), 0);
+    const message = `Hey ${personName}! 👋 Here's a summary of what we split:\n\n${lines}\n\nTotal you owe me: ${formatCurrency(total)}\n\nThanks! 🙏`;
+    navigator.share({ title: `You owe me ${formatCurrency(total)}`, text: message });
+  };
+
+  const canShare = typeof navigator !== 'undefined' && !!navigator.share;
 
   if (balances.length === 0) {
     return (
@@ -65,13 +100,46 @@ export function SharedExpenses({ transactions, onSettleUp, defaultCurrency }: Sh
               </div>
             </div>
 
-            <button
-              onClick={() => onSettleUp(balance.person)}
-              className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold rounded-xl transition-colors"
-            >
-              <CheckCircle2 size={20} />
-              Mark as Settled
-            </button>
+            <div className="flex flex-col gap-2">
+              {canShare && (
+                <button
+                  onClick={() => handleShare(balance.person)}
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/20 dark:hover:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-bold rounded-xl transition-colors"
+                >
+                  <Share2 size={18} />
+                  Share reminder
+                </button>
+              )}
+
+              <button
+                onClick={() => handleCopySummary(balance.person)}
+                className={`w-full flex items-center justify-center gap-2 py-3 font-bold rounded-xl transition-all duration-300 ${
+                  copiedPerson === balance.person
+                    ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-500'
+                    : 'bg-slate-50 hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300'
+                }`}
+              >
+                {copiedPerson === balance.person ? (
+                  <>
+                    <Check size={18} />
+                    Copied to clipboard!
+                  </>
+                ) : (
+                  <>
+                    <Copy size={18} />
+                    Copy reminder message
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={() => onSettleUp(balance.person)}
+                className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold rounded-xl transition-colors"
+              >
+                <CheckCircle2 size={20} />
+                Mark as Settled
+              </button>
+            </div>
           </div>
         ))}
       </div>
