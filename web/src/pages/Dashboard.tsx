@@ -82,7 +82,8 @@ export function Dashboard({
           change={`${stats.balanceChange.toFixed(1)}%`}
           isPositive={stats.balance >= 0}
           icon={Wallet}
-          iconColor="bg-primary-400"
+          iconBg="bg-primary-400/10"
+          iconText="text-primary-400"
         />
         <StatCard
           title={`${periodLabel} Income`}
@@ -90,7 +91,8 @@ export function Dashboard({
           change={`${stats.incomeChange.toFixed(1)}%`}
           isPositive={true}
           icon={TrendingUp}
-          iconColor="bg-emerald-600"
+          iconBg="bg-emerald-600/10"
+          iconText="text-emerald-600"
         />
         <StatCard
           title={`${periodLabel} Expenses`}
@@ -98,7 +100,8 @@ export function Dashboard({
           change={`${stats.expensesChange.toFixed(1)}%`}
           isPositive={false}
           icon={TrendingDown}
-          iconColor="bg-rose-600"
+          iconBg="bg-rose-600/10"
+          iconText="text-rose-600"
         />
       </div>
 

@@ -6,7 +6,8 @@ interface StatCardProps {
   change: string;
   isPositive: boolean;
   icon: LucideIcon;
-  iconColor: string;
+  iconBg: string;
+  iconText: string;
 }
 
 export function StatCard({
@@ -15,13 +16,14 @@ export function StatCard({
   change,
   isPositive,
   icon: Icon,
-  iconColor,
+  iconBg,
+  iconText,
 }: StatCardProps) {
   return (
     <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-4">
-        <div className={`p-2 rounded-lg ${iconColor} bg-opacity-10`}>
-          <Icon className={iconColor.replace('bg-', 'text-')} size={24} />
+        <div className={`p-2 rounded-lg ${iconBg}`}>
+          <Icon className={iconText} size={24} />
         </div>
         <div
           className={`flex items-center gap-1 text-sm font-medium ${isPositive ? 'text-emerald-600' : 'text-rose-600'}`}
