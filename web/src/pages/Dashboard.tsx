@@ -1,4 +1,5 @@
 import { Wallet, TrendingUp, TrendingDown, Search, ChevronDown, Check } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { StatCard } from '../components/ui/StatCard';
 import { TransactionList } from '../components/ui/TransactionList';
 import type { Transaction, DashboardStats, FilterRange, UserProfile } from '../types';
@@ -75,35 +76,79 @@ export function Dashboard({
   return (
     <div className="max-w-7xl mx-auto">
       <SpendingAlerts transactions={transactions} />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <StatCard
-          title="Total Balance"
-          amount={stats.balance}
-          change={`${stats.balanceChange.toFixed(1)}%`}
-          isPositive={stats.balance >= 0}
-          icon={Wallet}
-          iconBg="bg-primary-400/10"
-          iconText="text-primary-400"
-        />
-        <StatCard
-          title={`${periodLabel} Income`}
-          amount={stats.income}
-          change={`${stats.incomeChange.toFixed(1)}%`}
-          isPositive={true}
-          icon={TrendingUp}
-          iconBg="bg-emerald-600/10"
-          iconText="text-emerald-600"
-        />
-        <StatCard
-          title={`${periodLabel} Expenses`}
-          amount={stats.expenses}
-          change={`${stats.expensesChange.toFixed(1)}%`}
-          isPositive={false}
-          icon={TrendingDown}
-          iconBg="bg-rose-600/10"
-          iconText="text-rose-600"
-        />
-      </div>
+      <motion.div
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.1 },
+          },
+        }}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+      >
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { type: 'spring', stiffness: 300, damping: 24 },
+            },
+          }}
+        >
+          <StatCard
+            title="Total Balance"
+            amount={stats.balance}
+            change={`${stats.balanceChange.toFixed(1)}%`}
+            isPositive={stats.balance >= 0}
+            icon={Wallet}
+            iconBg="bg-primary-400/10"
+            iconText="text-primary-400"
+          />
+        </motion.div>
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { type: 'spring', stiffness: 300, damping: 24 },
+            },
+          }}
+        >
+          <StatCard
+            title={`${periodLabel} Income`}
+            amount={stats.income}
+            change={`${stats.incomeChange.toFixed(1)}%`}
+            isPositive={true}
+            icon={TrendingUp}
+            iconBg="bg-emerald-600/10"
+            iconText="text-emerald-600"
+          />
+        </motion.div>
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { type: 'spring', stiffness: 300, damping: 24 },
+            },
+          }}
+        >
+          <StatCard
+            title={`${periodLabel} Expenses`}
+            amount={stats.expenses}
+            change={`${stats.expensesChange.toFixed(1)}%`}
+            isPositive={false}
+            icon={TrendingDown}
+            iconBg="bg-rose-600/10"
+            iconText="text-rose-600"
+          />
+        </motion.div>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-2 space-y-4">
