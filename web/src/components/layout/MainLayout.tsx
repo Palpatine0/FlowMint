@@ -27,7 +27,7 @@ export function MainLayout({
   badges,
 }: MainLayoutProps) {
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased">
+    <div className="flex h-screen w-full antialiased text-slate-900 dark:text-slate-100">
       <Sidebar
         activeNav={activeNav}
         onNavChange={onNavChange}

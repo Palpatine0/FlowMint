@@ -54,8 +54,8 @@ export function Sidebar({
     .toUpperCase()
     .slice(0, 2);
   return (
-    <aside className="w-64 h-screen bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col shrink-0">
-      <div className="p-6 border-b border-slate-100 dark:border-slate-700">
+    <aside className="w-64 h-screen bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 flex flex-col shrink-0 z-20 relative">
+      <div className="p-6 border-b border-slate-100/50 dark:border-slate-700/50">
         <h2 className="text-xl font-bold text-primary-500 flex items-center gap-2">
           <img src={iconLogo} alt="FlowMint logo" className="w-8 h-8" />
           Flow Mint
@@ -69,8 +69,8 @@ export function Sidebar({
             onClick={() => onNavChange(item.label)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
               activeNav === item.label
-                ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-500 font-semibold'
-                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100'
+                ? 'bg-primary-50/80 dark:bg-primary-900/30 text-primary-500 font-semibold'
+                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50/50 dark:hover:bg-slate-700/50 hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >
             <item.icon size={20} />
@@ -87,7 +87,7 @@ export function Sidebar({
       <div className="p-4 border-t border-slate-100 dark:border-slate-700 space-y-2">
         <button
           onClick={() => onNavChange('Settings')}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors"
         >
           {avatarUrl ? (
             <img
@@ -110,7 +110,7 @@ export function Sidebar({
         </button>
         <button
           onClick={() => onNavChange('Help')}
-          className="w-full flex items-center justify-between px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-primary-500 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors rounded-xl"
+          className="w-full flex items-center justify-between px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-primary-500 hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors rounded-xl"
         >
           <div className="flex items-center gap-3">
             <HelpCircle size={20} />
@@ -118,7 +118,7 @@ export function Sidebar({
           </div>
           <ExternalLink size={14} className="opacity-40" />
         </button>
-        <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors rounded-xl">
+        <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-red-500 hover:bg-red-50/80 dark:hover:bg-red-900/20 transition-colors rounded-xl">
           <LogOut size={20} />
           Logout
         </button>
