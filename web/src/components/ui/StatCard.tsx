@@ -1,8 +1,11 @@
 import { ArrowUpRight, ArrowDownRight, type LucideIcon } from 'lucide-react';
+import CountUpLib from 'react-countup';
+
+const CountUp = (CountUpLib as any).default || CountUpLib;
 
 interface StatCardProps {
   title: string;
-  amount: string;
+  amount: number;
   change: string;
   isPositive: boolean;
   icon: LucideIcon;
@@ -35,7 +38,15 @@ export function StatCard({
 
       <div>
         <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{title}</p>
-        <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{amount}</h3>
+        <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">
+          <CountUp
+            end={amount}
+            duration={1.5}
+            separator=","
+            prefix="$"
+            decimals={Math.abs(amount % 1) > 0.01 ? 2 : 0}
+          />
+        </h3>
       </div>
     </div>
   );

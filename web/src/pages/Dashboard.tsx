@@ -78,7 +78,7 @@ export function Dashboard({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard
           title="Total Balance"
-          amount={`$${stats.balance.toLocaleString()}`}
+          amount={stats.balance}
           change={`${stats.balanceChange.toFixed(1)}%`}
           isPositive={stats.balance >= 0}
           icon={Wallet}
@@ -87,7 +87,7 @@ export function Dashboard({
         />
         <StatCard
           title={`${periodLabel} Income`}
-          amount={`$${stats.income.toLocaleString()}`}
+          amount={stats.income}
           change={`${stats.incomeChange.toFixed(1)}%`}
           isPositive={true}
           icon={TrendingUp}
@@ -96,7 +96,7 @@ export function Dashboard({
         />
         <StatCard
           title={`${periodLabel} Expenses`}
-          amount={`$${stats.expenses.toLocaleString()}`}
+          amount={stats.expenses}
           change={`${stats.expensesChange.toFixed(1)}%`}
           isPositive={false}
           icon={TrendingDown}
