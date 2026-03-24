@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Snackbar, Alert } from '@mui/material';
 import { DateFilter } from './components/ui/DateFilter';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import type {
   FilterRange,
@@ -278,83 +279,94 @@ export default function App() {
       avatarUrl={profile.avatarUrl}
       badges={{ 'Shared Expenses': getSharedBalances(transactions).length || 0 }}
     >
-      {activeNav === 'Overview' && (
-        <>
-          <div className="mb-8">
-            <DateFilter
-              activeRange={activeRange}
-              onRangeChange={setActiveRange}
-              customDates={customDates}
-              onCustomChange={handleCustomChange}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeNav}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="w-full flex-1"
+        >
+          {activeNav === 'Overview' && (
+            <>
+              <div className="mb-8">
+                <DateFilter
+                  activeRange={activeRange}
+                  onRangeChange={setActiveRange}
+                  customDates={customDates}
+                  onCustomChange={handleCustomChange}
+                />
+              </div>
+              <Dashboard
+                activeRange={activeRange}
+                stats={stats}
+                transactions={filteredTransactions}
+                onDeleteTransaction={handleDeleteTransaction}
+                onEditTransaction={handleEditTransaction}
+                dateFormat={profile.dateFormat}
+              />
+            </>
+          )}
+          {activeNav === 'Accounts' && <Accounts transactions={transactions} />}
+          {activeNav === 'Transactions' && (
+            <Transactions
+              transactions={transactions}
+              onDelete={handleDeleteTransaction}
+              onEdit={handleEditTransaction}
+              dateFormat={profile.dateFormat}
             />
-          </div>
-          <Dashboard
-            activeRange={activeRange}
-            stats={stats}
-            transactions={filteredTransactions}
-            onDeleteTransaction={handleDeleteTransaction}
-            onEditTransaction={handleEditTransaction}
-            dateFormat={profile.dateFormat}
-          />
-        </>
-      )}
-      {activeNav === 'Accounts' && <Accounts transactions={transactions} />}
-      {activeNav === 'Transactions' && (
-        <Transactions
-          transactions={transactions}
-          onDelete={handleDeleteTransaction}
-          onEdit={handleEditTransaction}
-          dateFormat={profile.dateFormat}
-        />
-      )}
-      {activeNav === 'Budgets' && <Budgets transactions={transactions} />}
-      {activeNav === 'Calendar' && <CalendarView transactions={transactions} />}
-      {activeNav === 'Settings' && (
-        <Settings
-          profile={profile}
-          onSave={handleSaveProfile}
-          onThemeChange={(theme) => {
-            const updated = { ...profile, theme };
-            saveUserProfile(updated);
-            setProfile(updated);
-          }}
-        />
-      )}
-      {activeNav === 'Recurring' && (
-        <Recurring
-          recurringTransactions={recurringTransactions}
-          onDelete={handleDeleteRecurringItem}
-          onEdit={handleEditRecurringItem}
-          onToggleActive={handleToggleRecurringActive}
-          dateFormat={profile.dateFormat}
-        />
-      )}
-      {activeNav === 'Goals' && (
-        <Goals
-          goals={goals}
-          onAdd={() => setIsAddGoalModalOpen(true)}
-          onEdit={(g) => {
-            setEditGoal(g);
-            setIsAddGoalModalOpen(true);
-          }}
-          onDelete={handleDeleteGoal}
-          onFund={(g) => {
-            setFundGoalTarget(g);
-            setIsFundGoalModalOpen(true);
-          }}
-        />
-      )}
-      {activeNav === 'Bank Sync' && <BankSync onSync={handleBankSync} />}
-      {activeNav === 'Charts' && <Charts transactions={transactions} />}
-      {activeNav === 'Tax Estimator' && <TaxEstimator transactions={transactions} />}
-      {activeNav === 'Shared Expenses' && (
-        <SharedExpenses
-          transactions={transactions}
-          onSettleUp={handleSettleUp}
-          defaultCurrency={profile.defaultCurrency}
-        />
-      )}
-      {activeNav === 'Help' && <Help />}
+          )}
+          {activeNav === 'Budgets' && <Budgets transactions={transactions} />}
+          {activeNav === 'Calendar' && <CalendarView transactions={transactions} />}
+          {activeNav === 'Settings' && (
+            <Settings
+              profile={profile}
+              onSave={handleSaveProfile}
+              onThemeChange={(theme) => {
+                const updated = { ...profile, theme };
+                saveUserProfile(updated);
+                setProfile(updated);
+              }}
+            />
+          )}
+          {activeNav === 'Recurring' && (
+            <Recurring
+              recurringTransactions={recurringTransactions}
+              onDelete={handleDeleteRecurringItem}
+              onEdit={handleEditRecurringItem}
+              onToggleActive={handleToggleRecurringActive}
+              dateFormat={profile.dateFormat}
+            />
+          )}
+          {activeNav === 'Goals' && (
+            <Goals
+              goals={goals}
+              onAdd={() => setIsAddGoalModalOpen(true)}
+              onEdit={(g) => {
+                setEditGoal(g);
+                setIsAddGoalModalOpen(true);
+              }}
+              onDelete={handleDeleteGoal}
+              onFund={(g) => {
+                setFundGoalTarget(g);
+                setIsFundGoalModalOpen(true);
+              }}
+            />
+          )}
+          {activeNav === 'Bank Sync' && <BankSync onSync={handleBankSync} />}
+          {activeNav === 'Charts' && <Charts transactions={transactions} />}
+          {activeNav === 'Tax Estimator' && <TaxEstimator transactions={transactions} />}
+          {activeNav === 'Shared Expenses' && (
+            <SharedExpenses
+              transactions={transactions}
+              onSettleUp={handleSettleUp}
+              defaultCurrency={profile.defaultCurrency}
+            />
+          )}
+          {activeNav === 'Help' && <Help />}
+        </motion.div>
+      </AnimatePresence>
 
       <AddTransactionModal
         isOpen={isModalOpen}
