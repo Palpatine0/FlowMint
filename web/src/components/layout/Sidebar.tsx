@@ -15,6 +15,7 @@ import {
   Calculator,
   Users,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import iconLogo from '../../assets/icon-logo.svg';
 
 const menuItems = [
@@ -64,7 +65,9 @@ export function Sidebar({
 
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {menuItems.map((item) => (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02, x: 4 }}
+            whileTap={{ scale: 0.98 }}
             key={item.label}
             onClick={() => onNavChange(item.label)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
@@ -80,12 +83,14 @@ export function Sidebar({
                 {badges[item.label]}
               </span>
             ) : null}
-          </button>
+          </motion.button>
         ))}
       </nav>
 
       <div className="p-4 border-t border-slate-100 dark:border-slate-700 space-y-2">
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => onNavChange('Settings')}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors"
         >
@@ -107,8 +112,10 @@ export function Sidebar({
           <span className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">
             {userName || 'User'}
           </span>
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => onNavChange('Help')}
           className="w-full flex items-center justify-between px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-primary-500 hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors rounded-xl"
         >
@@ -117,11 +124,15 @@ export function Sidebar({
             Help
           </div>
           <ExternalLink size={14} className="opacity-40" />
-        </button>
-        <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-red-500 hover:bg-red-50/80 dark:hover:bg-red-900/20 transition-colors rounded-xl">
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-red-500 hover:bg-red-50/80 dark:hover:bg-red-900/20 transition-colors rounded-xl"
+        >
           <LogOut size={20} />
           Logout
-        </button>
+        </motion.button>
       </div>
     </aside>
   );

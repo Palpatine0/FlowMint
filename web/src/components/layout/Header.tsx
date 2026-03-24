@@ -1,4 +1,5 @@
 import { LayoutDashboard, Plus, Moon, Sun, UploadCloud } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface HeaderProps {
   activeNav: string;
@@ -22,24 +23,30 @@ export function Header({
         <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{activeNav}</h1>
       </div>
       <div className="flex items-center gap-3">
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={onToggleDarkMode}
           className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-700/50 transition-colors"
         >
           {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={onImportClick}
           className="flex items-center gap-2 bg-slate-100/80 dark:bg-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
         >
           <UploadCloud size={18} /> Import
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={onAddClick}
           className="flex items-center gap-2 bg-primary-400 hover:bg-primary-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm shadow-primary-200"
         >
           <Plus size={18} /> Add Transaction
-        </button>
+        </motion.button>
       </div>
     </header>
   );
