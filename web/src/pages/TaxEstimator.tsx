@@ -6,6 +6,8 @@ import {
   Info,
   ArrowRight,
   ShieldCheck,
+  Globe,
+  MapPin,
   Building2,
   HardHat,
   Monitor,
@@ -29,8 +31,19 @@ interface TaxEstimatorProps {
 }
 
 export function TaxEstimator({ transactions }: TaxEstimatorProps) {
-  const [includeStateTax, setIncludeStateTax] = useState(true);
-  const [taxRate, setTaxRate] = useState(25); // Default total estimated rate
+  const [visaStatus, setVisaStatus] = useState('US Citizen / Resident');
+  const [stateCode, setStateCode] = useState('CA');
+  const [federalRate, setFederalRate] = useState(12);
+
+  const STATE_RATES: Record<string, number> = {
+    CA: 0.08,
+    TX: 0,
+    FL: 0,
+    NV: 0,
+    WA: 0,
+    NY: 0.065,
+    OTHER: 0.05,
+  };
 
   const taxData = useMemo(() => {
     const income = transactions
@@ -44,10 +57,19 @@ export function TaxEstimator({ transactions }: TaxEstimatorProps) {
       .reduce((sum, t) => sum + t.amount, 0);
 
     const taxableIncome = Math.max(0, income - deductions);
-    const selfEmploymentTax = taxableIncome * 0.153; // 15.3% SE Tax
-    const estimatedFederalTax = taxableIncome * (taxRate / 100 - 0.153);
-    const totalTax =
-      selfEmploymentTax + (includeStateTax ? taxableIncome * 0.05 : 0) + estimatedFederalTax;
+
+    // F-1/OPT and J-1 Non-Resident Aliens are explicitly exempt from FICA (15.3% SE Tax)
+    const isExemptFromSE = visaStatus === 'F-1 / OPT' || visaStatus === 'J-1';
+    const selfEmploymentTax = isExemptFromSE ? 0 : taxableIncome * 0.153;
+
+    // Look up real state tax average rates
+    const stateTaxRate = STATE_RATES[stateCode] ?? 0.05;
+    const stateTax = taxableIncome * stateTaxRate;
+
+    // Federal effective rate
+    const estimatedFederalTax = taxableIncome * (federalRate / 100);
+
+    const totalTax = selfEmploymentTax + stateTax + estimatedFederalTax;
 
     const netIncome = income - totalTax;
 
@@ -56,6 +78,7 @@ export function TaxEstimator({ transactions }: TaxEstimatorProps) {
       deductions,
       taxableIncome,
       selfEmploymentTax,
+      stateTax,
       estimatedFederalTax,
       totalTax,
       netIncome,
@@ -68,7 +91,7 @@ export function TaxEstimator({ transactions }: TaxEstimatorProps) {
         }))
         .filter((d) => d.value > 0),
     };
-  }, [transactions, includeStateTax, taxRate]);
+  }, [transactions, visaStatus, stateCode, federalRate]);
 
   const chartData = [
     { name: 'Gross Income', amount: taxData.income, fill: '#6366f1' },
@@ -90,31 +113,54 @@ export function TaxEstimator({ transactions }: TaxEstimatorProps) {
             Real-time tax liability insights for freelancers.
           </p>
         </div>
-        <div className="flex items-center gap-4 bg-white dark:bg-slate-800 p-2 rounded-2xl border border-slate-200 dark:border-slate-700">
+        <div className="flex flex-wrap items-center gap-4 bg-white dark:bg-slate-800 p-2 rounded-2xl border border-slate-200 dark:border-slate-700">
+          {/* Visa Status Toggle */}
           <div className="flex items-center gap-2 px-3">
-            <span className="text-xs font-bold text-slate-500 uppercase">State Tax</span>
-            <button
-              onClick={() => setIncludeStateTax(!includeStateTax)}
-              className={`w-10 h-5 rounded-full transition-colors relative ${includeStateTax ? 'bg-primary-500' : 'bg-slate-300'}`}
-            >
-              <div
-                className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${includeStateTax ? 'left-6' : 'left-1'}`}
-              />
-            </button>
-          </div>
-          <div className="h-4 w-[1px] bg-slate-200 dark:bg-slate-700" />
-          <div className="flex items-center gap-2 px-3">
-            <span className="text-xs font-bold text-slate-500 uppercase">Est. Rate</span>
+            <Globe size={16} className="text-slate-400" />
             <select
-              value={taxRate}
-              onChange={(e) => setTaxRate(Number(e.target.value))}
-              className="text-sm font-bold bg-transparent border-none focus:ring-0 text-primary-600 cursor-pointer"
+              value={visaStatus}
+              onChange={(e) => setVisaStatus(e.target.value)}
+              className="text-sm font-bold bg-transparent border-none focus:ring-0 text-slate-700 dark:text-slate-200 cursor-pointer outline-none w-28 md:w-auto"
             >
-              <option value={15}>15%</option>
-              <option value={20}>20%</option>
-              <option value={25}>25%</option>
-              <option value={30}>30%</option>
-              <option value={35}>35%</option>
+              <option value="US Citizen / Resident">US Citizen / Resident</option>
+              <option value="F-1 / OPT">F-1 / OPT Student</option>
+              <option value="J-1">J-1 Exchange Visitor</option>
+            </select>
+          </div>
+          <div className="hidden md:block h-4 w-[1px] bg-slate-200 dark:bg-slate-700" />
+
+          {/* State Dropdown */}
+          <div className="flex items-center gap-2 px-3">
+            <MapPin size={16} className="text-slate-400" />
+            <select
+              value={stateCode}
+              onChange={(e) => setStateCode(e.target.value)}
+              className="text-sm font-bold bg-transparent border-none focus:ring-0 text-slate-700 dark:text-slate-200 cursor-pointer outline-none w-28 md:w-auto"
+            >
+              <option value="CA">California (8%)</option>
+              <option value="NY">New York (6.5%)</option>
+              <option value="TX">Texas (0%)</option>
+              <option value="FL">Florida (0%)</option>
+              <option value="WA">Washington (0%)</option>
+              <option value="NV">Nevada (0%)</option>
+              <option value="OTHER">Other State (~5%)</option>
+            </select>
+          </div>
+          <div className="hidden md:block h-4 w-[1px] bg-slate-200 dark:bg-slate-700" />
+
+          {/* Federal Bracket */}
+          <div className="flex items-center gap-2 px-3">
+            <span className="text-xs font-bold text-slate-500 uppercase">Fed Bracket</span>
+            <select
+              value={federalRate}
+              onChange={(e) => setFederalRate(Number(e.target.value))}
+              className="text-sm font-bold bg-transparent border-none focus:ring-0 text-primary-600 cursor-pointer outline-none"
+            >
+              <option value={10}>10%</option>
+              <option value={12}>12%</option>
+              <option value={22}>22%</option>
+              <option value={24}>24%</option>
+              <option value={32}>32%</option>
             </select>
           </div>
         </div>
