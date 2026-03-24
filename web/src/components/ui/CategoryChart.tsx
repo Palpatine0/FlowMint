@@ -47,6 +47,9 @@ export function CategoryChart({ transactions }: Props) {
           outerRadius="72%"
           paddingAngle={3}
           dataKey="value"
+          isAnimationActive={true}
+          animationDuration={1000}
+          animationEasing="ease-out"
         >
           {data.map((_, i) => (
             <Cell key={i} fill={COLORS[i % COLORS.length]} />

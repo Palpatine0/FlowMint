@@ -65,6 +65,9 @@ export function BalanceChart({ transactions }: Props) {
             fillOpacity={1}
             fill="url(#colorBalance)"
             strokeWidth={3}
+            isAnimationActive={true}
+            animationDuration={1000}
+            animationEasing="ease-out"
           />
         </AreaChart>
       </ResponsiveContainer>
