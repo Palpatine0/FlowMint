@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 
@@ -26,6 +27,8 @@ export function MainLayout({
   avatarUrl,
   badges,
 }: MainLayoutProps) {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   return (
     <div className="flex h-screen w-full antialiased text-slate-900 dark:text-slate-100">
       <Sidebar
@@ -34,6 +37,8 @@ export function MainLayout({
         userName={userName}
         avatarUrl={avatarUrl}
         badges={badges}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed((c) => !c)}
       />
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Header
