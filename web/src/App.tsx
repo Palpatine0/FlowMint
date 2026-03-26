@@ -279,6 +279,21 @@ export default function App() {
     setProfile(updated);
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement).isContentEditable)
+        return;
+      if (e.key === 'n' || e.key === 'N') {
+        e.preventDefault();
+        if (activeNav === 'Recurring') setIsRecurringModalOpen(true);
+        else setIsModalOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeNav]);
+
   if (!isLoggedIn) {
     return <LoginPage onLogin={handleLogin} />;
   }
