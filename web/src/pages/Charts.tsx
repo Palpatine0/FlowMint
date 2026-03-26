@@ -272,11 +272,17 @@ export function Charts({ transactions }: Props) {
             })}
           </p>
         </div>
-        <div className="p-6 bg-primary-50 dark:bg-primary-900/10 border border-primary-100 dark:border-primary-800/50 rounded-2xl">
-          <p className="text-xs font-bold text-primary-600 dark:text-primary-400 uppercase tracking-widest mb-1">
+        <div
+          className="p-6 rounded-2xl border"
+          style={{ background: '#f0fdf4', borderColor: '#bbf7d0' }}
+        >
+          <p
+            className="text-xs font-bold uppercase tracking-widest mb-1"
+            style={{ color: '#15803d' }}
+          >
             Net Impact
           </p>
-          <p className="text-2xl font-black text-primary-900 dark:text-primary-100">
+          <p className="text-2xl font-black" style={{ color: '#14532d' }}>
             $
             {(totalByType[1].amount - totalByType[0].amount).toLocaleString(undefined, {
               minimumFractionDigits: 2,
