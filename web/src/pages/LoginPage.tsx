@@ -186,8 +186,22 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               <motion.div
                 key={card.label}
                 initial={{ opacity: 0, y: 40, rotate: 0 }}
-                animate={{ opacity: 1, y: 0, rotate: card.rotate }}
-                transition={{ duration: 0.7, delay: 0.6 + i * 0.12, type: 'spring', damping: 14 }}
+                animate={{
+                  opacity: 1,
+                  y: [0, -12, 0],
+                  rotate: card.rotate,
+                }}
+                transition={{
+                  opacity: { duration: 0.7, delay: 0.6 + i * 0.12 },
+                  rotate: { duration: 0.7, delay: 0.6 + i * 0.12 },
+                  y: {
+                    duration: 3 + i * 0.5,
+                    delay: 0.6 + i * 0.12,
+                    repeat: Infinity,
+                    repeatType: 'loop',
+                    ease: 'easeInOut',
+                  },
+                }}
                 className="absolute z-20 hidden md:flex"
                 style={{ left: `calc(50% + ${card.x}px)`, top: card.y }}
               >
