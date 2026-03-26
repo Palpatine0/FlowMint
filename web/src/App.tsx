@@ -25,6 +25,7 @@ import { getUserProfile, saveUserProfile } from './services/userService';
 import { getSavingsGoals, saveSavingsGoals } from './services/goalService';
 
 import { MainLayout } from './components/layout/MainLayout';
+import { LoginPage } from './pages/LoginPage';
 import { Dashboard } from './pages/Dashboard';
 import { Accounts } from './pages/Accounts';
 import { Budgets } from './pages/Budgets';
@@ -46,6 +47,20 @@ import { ImportModal } from './components/ui/ImportModal';
 import { ChatWidget } from './components/ui/ChatWidget';
 
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => sessionStorage.getItem('flowmint_session') === 'guest',
+  );
+
+  const handleLogin = () => {
+    sessionStorage.setItem('flowmint_session', 'guest');
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('flowmint_session');
+    setIsLoggedIn(false);
+  };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -264,8 +279,13 @@ export default function App() {
     setProfile(updated);
   };
 
+  if (!isLoggedIn) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
   return (
     <MainLayout
+      onLogout={handleLogout}
       onAddClick={() => {
         if (activeNav === 'Recurring') setIsRecurringModalOpen(true);
         else setIsModalOpen(true);

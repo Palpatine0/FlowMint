@@ -8,6 +8,7 @@ interface MainLayoutProps {
   activeNav: string;
   onNavChange: (label: string) => void;
   onImportClick: () => void;
+  onLogout: () => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
   userName?: string;
@@ -21,6 +22,7 @@ export function MainLayout({
   activeNav,
   onNavChange,
   onImportClick,
+  onLogout,
   darkMode,
   onToggleDarkMode,
   userName,
@@ -34,6 +36,7 @@ export function MainLayout({
       <Sidebar
         activeNav={activeNav}
         onNavChange={onNavChange}
+        onLogout={onLogout}
         userName={userName}
         avatarUrl={avatarUrl}
         badges={badges}

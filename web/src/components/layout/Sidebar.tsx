@@ -37,6 +37,7 @@ const menuItems = [
 interface SidebarProps {
   activeNav: string;
   onNavChange: (label: string) => void;
+  onLogout: () => void;
   userName?: string;
   avatarUrl?: string;
   badges?: Record<string, number>;
@@ -47,6 +48,7 @@ interface SidebarProps {
 export function Sidebar({
   activeNav,
   onNavChange,
+  onLogout,
   userName,
   avatarUrl,
   badges = {},
@@ -213,6 +215,7 @@ export function Sidebar({
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
+          onClick={onLogout}
           title={collapsed ? 'Logout' : undefined}
           className={`w-full flex items-center ${collapsed ? 'justify-center px-2' : 'gap-3 px-4'} py-3 text-slate-500 dark:text-slate-400 hover:text-red-500 hover:bg-red-50/80 dark:hover:bg-red-900/20 transition-colors rounded-xl`}
         >
