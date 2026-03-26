@@ -70,12 +70,12 @@ export function Charts({ transactions }: Props) {
     {
       name: 'Expense',
       amount: filteredTxs.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0),
-      fill: '#22c55e',
+      fill: '#ef4444',
     },
     {
       name: 'Income',
       amount: filteredTxs.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0),
-      fill: '#ef4444',
+      fill: '#10b981',
     },
   ];
 
@@ -248,20 +248,28 @@ export function Charts({ transactions }: Props) {
 
       {/* Insight Stats Card */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/50 rounded-2xl">
-          <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">
-            Total Expenses
-          </p>
-          <p className="text-2xl font-black text-emerald-900 dark:text-emerald-100">
-            ${totalByType[0].amount.toLocaleString()}
-          </p>
-        </div>
         <div className="p-6 bg-rose-50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-800/50 rounded-2xl">
           <p className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-widest mb-1">
-            Total Income
+            Total Expenses
           </p>
           <p className="text-2xl font-black text-rose-900 dark:text-rose-100">
-            ${totalByType[1].amount.toLocaleString()}
+            $
+            {totalByType[0].amount.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </p>
+        </div>
+        <div className="p-6 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/50 rounded-2xl">
+          <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">
+            Total Income
+          </p>
+          <p className="text-2xl font-black text-emerald-900 dark:text-emerald-100">
+            $
+            {totalByType[1].amount.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </p>
         </div>
         <div className="p-6 bg-primary-50 dark:bg-primary-900/10 border border-primary-100 dark:border-primary-800/50 rounded-2xl">
@@ -269,7 +277,11 @@ export function Charts({ transactions }: Props) {
             Net Impact
           </p>
           <p className="text-2xl font-black text-primary-900 dark:text-primary-100">
-            ${(totalByType[1].amount - totalByType[0].amount).toLocaleString()}
+            $
+            {(totalByType[1].amount - totalByType[0].amount).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </p>
         </div>
       </div>
