@@ -338,7 +338,14 @@ export default function App() {
             />
           )}
           {activeNav === 'Budgets' && <Budgets transactions={transactions} />}
-          {activeNav === 'Calendar' && <CalendarView transactions={transactions} />}
+          {activeNav === 'Calendar' && (
+            <CalendarView
+              transactions={transactions}
+              onDelete={handleDeleteTransaction}
+              onEdit={handleEditTransaction}
+              dateFormat={profile.dateFormat}
+            />
+          )}
           {activeNav === 'Settings' && (
             <Settings
               profile={profile}
