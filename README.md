@@ -22,3 +22,4 @@ pnpm install
 pnpm run dev
 ```
 
+API Key: AIzaSyBBdAU3bXBC5TJMzD5-CuXWF0QQdq6k1ZA
