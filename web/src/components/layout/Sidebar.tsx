@@ -15,6 +15,7 @@ import {
   Calculator,
   Users,
   ChevronsLeft,
+  X,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import iconLogo from '../../assets/icon-logo.svg';
@@ -43,6 +44,8 @@ interface SidebarProps {
   badges?: Record<string, number>;
   collapsed?: boolean;
   onToggleCollapse?: () => void;
+  isMobileDrawer?: boolean;
+  onCloseMobileDrawer?: () => void;
 }
 
 export function Sidebar({
@@ -54,6 +57,8 @@ export function Sidebar({
   badges = {},
   collapsed = false,
   onToggleCollapse,
+  isMobileDrawer = false,
+  onCloseMobileDrawer,
 }: SidebarProps) {
   const initials = (userName || 'U')
     .split(' ')
@@ -66,7 +71,7 @@ export function Sidebar({
     <motion.aside
       animate={{ width: collapsed ? 76 : 256 }}
       transition={{ duration: 0.25, ease: 'easeInOut' }}
-      className="h-screen bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 flex flex-col shrink-0 z-20 relative"
+      className="h-screen max-h-[100dvh] bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 flex flex-col shrink-0 z-20 relative"
     >
       {/* Header */}
       <div
@@ -94,13 +99,26 @@ export function Sidebar({
             )}
           </AnimatePresence>
         </motion.button>
-        {!collapsed && onToggleCollapse && (
+        {isMobileDrawer && onCloseMobileDrawer && (
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={onCloseMobileDrawer}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100/60 dark:hover:bg-slate-700/60 transition-colors"
+            title="Close menu"
+            type="button"
+          >
+            <X size={18} />
+          </motion.button>
+        )}
+        {!isMobileDrawer && !collapsed && onToggleCollapse && (
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={onToggleCollapse}
             className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100/60 dark:hover:bg-slate-700/60 transition-colors"
             title="Collapse sidebar"
+            type="button"
           >
             <ChevronsLeft size={18} />
           </motion.button>
