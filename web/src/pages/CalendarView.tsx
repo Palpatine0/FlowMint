@@ -1,13 +1,20 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import type { Transaction } from '../types';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import type { Transaction, UserProfile } from '../types';
+import { Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material';
+import { TransactionList } from '../components/ui/TransactionList';
+import { formatDate } from '../utils/formatDate';
 
 interface Props {
   transactions: Transaction[];
+  onDelete: (id: string) => void;
+  onEdit: (tx: Transaction) => void;
+  dateFormat?: UserProfile['dateFormat'];
 }
 
-export function CalendarView({ transactions }: Props) {
+export function CalendarView({ transactions, onDelete, onEdit, dateFormat = 'MM/DD/YYYY' }: Props) {
   const [currentDate, setCurrentDate] = useState(() => new Date());
+  const [selectedDateStr, setSelectedDateStr] = useState<string | null>(null);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth(); // 0-11
@@ -109,7 +116,12 @@ export function CalendarView({ transactions }: Props) {
             return (
               <div
                 key={`day-${dayNumber}`}
-                className={`min-h-[140px] p-3 border-b border-r border-slate-100 dark:border-slate-700 group transition-colors hover:bg-slate-50 dark:hover:bg-slate-700/50 ${isToday ? 'bg-primary-50/30 dark:bg-primary-900/10' : ''}`}
+                onClick={() => {
+                  if (dailyTxs.length > 0) {
+                    setSelectedDateStr(cellDatePrefix);
+                  }
+                }}
+                className={`min-h-[140px] p-3 border-b border-r border-slate-100 dark:border-slate-700 group transition-colors ${dailyTxs.length > 0 ? 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50' : ''} ${isToday ? 'bg-primary-50/30 dark:bg-primary-900/10' : ''}`}
               >
                 <div className="flex justify-between items-start mb-2">
                   <span
@@ -141,6 +153,48 @@ export function CalendarView({ transactions }: Props) {
           })}
         </div>
       </div>
+
+      <Dialog
+        open={selectedDateStr !== null}
+        onClose={() => setSelectedDateStr(null)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          className: 'bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-2xl',
+        }}
+      >
+        <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-700">
+          <DialogTitle className="!p-0 !text-xl !font-bold text-slate-800 dark:text-slate-100">
+            Transactions for {selectedDateStr ? formatDate(selectedDateStr, dateFormat) : ''}
+          </DialogTitle>
+          <IconButton
+            onClick={() => setSelectedDateStr(null)}
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+          >
+            <X size={20} />
+          </IconButton>
+        </div>
+        <DialogContent className="!p-6 bg-slate-50 dark:bg-slate-900/50">
+          {selectedDateStr &&
+            (() => {
+              const modalTransactions = transactions.filter((t) =>
+                t.date.startsWith(selectedDateStr),
+              );
+              return (
+                <TransactionList
+                  transactions={modalTransactions}
+                  onDelete={(id) => {
+                    onDelete(id);
+                    if (modalTransactions.length <= 1) setSelectedDateStr(null);
+                  }}
+                  onEdit={onEdit}
+                  dateFormat={dateFormat}
+                  emptyMessage="No transactions occurred on this day."
+                />
+              );
+            })()}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

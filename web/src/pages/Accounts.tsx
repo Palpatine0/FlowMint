@@ -1,5 +1,31 @@
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 import type { Transaction } from '../types';
+
+function buildNetWorthData(transactions: Transaction[]) {
+  const sorted = [...transactions].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+  );
+  let running = 0;
+  const points: { date: string; balance: number }[] = [];
+  for (const tx of sorted) {
+    running += tx.type === 'income' ? tx.amount : -tx.amount;
+    const label = new Date(tx.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    points.push({ date: label, balance: Math.round(running) });
+  }
+  // Deduplicate: keep last balance per date label
+  const map = new Map<string, number>();
+  for (const p of points) map.set(p.date, p.balance);
+  return Array.from(map.entries()).map(([date, balance]) => ({ date, balance }));
+}
 
 interface Props {
   transactions: Transaction[];
@@ -96,6 +122,74 @@ export function Accounts({ transactions }: Props) {
           </div>
         </div>
       ))}
+
+      {/* ── Net Worth Trend ──────────────────────────── */}
+      {(() => {
+        const data = buildNetWorthData(transactions);
+        const isPositive = (data[data.length - 1]?.balance ?? 0) >= 0;
+        const lineColor = isPositive ? '#76DDAA' : '#f87171';
+        return (
+          <div
+            className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm"
+            style={{ padding: '24px' }}
+          >
+            <p
+              className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest"
+              style={{ marginBottom: '20px' }}
+            >
+              Net Worth Over Time
+            </p>
+            {data.length < 2 ? (
+              <p className="text-slate-400 dark:text-slate-500 text-sm text-center py-6">
+                Add more transactions to see your trend.
+              </p>
+            ) : (
+              <ResponsiveContainer width="100%" height={200}>
+                <AreaChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="netWorthGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={lineColor} stopOpacity={0.25} />
+                      <stop offset="95%" stopColor={lineColor} stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 11, fill: '#94a3b8' }}
+                    axisLine={false}
+                    tickLine={false}
+                    interval="preserveStartEnd"
+                  />
+                  <YAxis
+                    tick={{ fontSize: 11, fill: '#94a3b8' }}
+                    axisLine={false}
+                    tickLine={false}
+                    tickFormatter={(v) => `$${Number(v).toLocaleString()}`}
+                    width={70}
+                  />
+                  <Tooltip
+                    formatter={(v) => [`$${Number(v).toLocaleString()}`, 'Net Worth']}
+                    contentStyle={{
+                      borderRadius: '10px',
+                      border: '1px solid #e2e8f0',
+                      fontSize: '12px',
+                    }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="balance"
+                    stroke={lineColor}
+                    strokeWidth={2.5}
+                    fill="url(#netWorthGrad)"
+                    dot={false}
+                    activeDot={{ r: 4, fill: lineColor }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        );
+      })()}
 
       {/* ── Category breakdown ───────────────────────── */}
       <div

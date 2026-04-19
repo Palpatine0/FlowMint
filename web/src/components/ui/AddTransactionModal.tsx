@@ -49,7 +49,10 @@ export function AddTransactionModal({
   const [splitWith, setSplitWith] = useState('');
   const [splitAmount, setSplitAmount] = useState('');
   const [isSplit, setIsSplit] = useState(false);
-  const getLocalDateString = (d: Date) => {
+  const getLocalDateString = (d: Date | string) => {
+    if (typeof d === 'string') {
+      return d.split('T')[0];
+    }
     return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
   };
 
@@ -70,7 +73,7 @@ export function AddTransactionModal({
       setAmount(String(editTransaction.amount));
       setDescription(editTransaction.description);
       setType(editTransaction.type);
-      setDate(getLocalDateString(new Date(editTransaction.date)));
+      setDate(getLocalDateString(editTransaction.date));
       if (isPreset(editTransaction.category)) {
         setCategory(editTransaction.category);
         setCustomCategory('');
@@ -159,7 +162,7 @@ export function AddTransactionModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-[1400] p-4">
       <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md shadow-2xl">
         <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-700">
           <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
