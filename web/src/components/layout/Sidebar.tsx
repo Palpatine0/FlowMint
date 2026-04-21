@@ -71,7 +71,7 @@ export function Sidebar({
     <motion.aside
       animate={{ width: collapsed ? 76 : 256 }}
       transition={{ duration: 0.25, ease: 'easeInOut' }}
-      className="h-screen max-h-[100dvh] bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 flex flex-col shrink-0 z-20 relative"
+      className="relative z-20 flex h-full min-h-0 max-h-full shrink-0 flex-col bg-white/70 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 dark:bg-slate-900/70"
     >
       {/* Header */}
       <div

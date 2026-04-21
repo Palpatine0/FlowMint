@@ -61,7 +61,7 @@ export function MainLayout({
   };
 
   return (
-    <div className="flex h-screen w-full antialiased text-slate-900 dark:text-slate-100">
+    <div className="flex h-dvh min-h-dvh w-full min-h-0 antialiased text-slate-900 dark:text-slate-100">
       {!isDesktop && mobileNavOpen && (
         <button
           type="button"
@@ -72,11 +72,11 @@ export function MainLayout({
       )}
       <div
         className={[
-          'shrink-0 h-screen z-50 transition-transform duration-200 ease-out',
+          'shrink-0 z-50 transition-transform duration-200 ease-out',
           isDesktop
-            ? 'relative translate-x-0'
+            ? 'relative h-dvh max-h-dvh min-h-dvh translate-x-0'
             : [
-                'fixed left-0 top-0 bottom-0 shadow-xl shadow-slate-900/10',
+                'fixed top-0 left-0 box-border flex h-dvh max-h-dvh min-h-0 flex-col py-safe shadow-xl shadow-slate-900/10',
                 mobileNavOpen ? 'translate-x-0' : '-translate-x-full pointer-events-none',
               ].join(' '),
         ].join(' ')}
@@ -97,7 +97,7 @@ export function MainLayout({
           onCloseMobileDrawer={() => setMobileNavOpen(false)}
         />
       </div>
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
+      <div className="flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden">
         <Header
           activeNav={activeNav}
           darkMode={darkMode}
@@ -106,8 +106,8 @@ export function MainLayout({
           onImportClick={onImportClick}
           onOpenMobileNav={() => setMobileNavOpen(true)}
         />
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">
-          <div className="max-w-7xl mx-auto">{children}</div>
+        <main className="min-h-0 flex-1 overflow-y-auto px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] md:p-8">
+          <div className="mx-auto max-w-7xl">{children}</div>
         </main>
       </div>
     </div>
