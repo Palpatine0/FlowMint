@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import type { RecurringTransaction, TransactionType, RecurringFrequency } from '../../types';
 
 interface Props {
@@ -112,8 +113,6 @@ export function AddRecurringModal({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -149,182 +148,204 @@ export function AddRecurringModal({
     onClose();
   };
 
+  const handleBackdropMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
   return (
-    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md shadow-2xl">
-        <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-700">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
-            {isEdit ? 'Edit Recurring' : 'Add Recurring'}
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onMouseDown={handleBackdropMouseDown}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 18, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.98 }}
+            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+            onMouseDown={(e) => e.stopPropagation()}
+            className="w-full max-w-md rounded-2xl bg-white shadow-2xl dark:bg-slate-800"
           >
-            <X size={24} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Amount
-              </label>
-              <input
-                ref={amountRef}
-                type="number"
-                value={amount}
-                onChange={(e) => {
-                  setAmount(e.target.value);
-                  setErrors((p) => ({ ...p, amount: undefined }));
-                }}
-                className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary-400 outline-none bg-white dark:bg-slate-700 dark:text-slate-100 ${errors.amount ? 'border-rose-400' : 'border-slate-200 dark:border-slate-600'}`}
-                placeholder="0.00"
-              />
-              {errors.amount && <p className="text-rose-500 text-xs mt-1">{errors.amount}</p>}
-            </div>
-            <div className="w-1/3">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Currency
-              </label>
-              <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
+            <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-700">
+              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                {isEdit ? 'Edit Recurring' : 'Add Recurring'}
+              </h2>
+              <button
+                onClick={onClose}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
               >
-                {CURRENCIES.map((code) => (
-                  <option key={code} value={code}>
-                    {code}
-                  </option>
-                ))}
-              </select>
+                <X size={24} />
+              </button>
             </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Description
-            </label>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => {
-                setDescription(e.target.value);
-                setErrors((p) => ({ ...p, description: undefined }));
-              }}
-              className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary-400 outline-none bg-white dark:bg-slate-700 dark:text-slate-100 ${errors.description ? 'border-rose-400' : 'border-slate-200 dark:border-slate-600'}`}
-              placeholder="e.g. Netflix Subscription"
-            />
-            {errors.description && (
-              <p className="text-rose-500 text-xs mt-1">{errors.description}</p>
-            )}
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Start Date
-              </label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Frequency
-              </label>
-              <select
-                value={frequency}
-                onChange={(e) => setFrequency(e.target.value as RecurringFrequency)}
-                className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
+            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Amount
+                  </label>
+                  <input
+                    ref={amountRef}
+                    type="number"
+                    value={amount}
+                    onChange={(e) => {
+                      setAmount(e.target.value);
+                      setErrors((p) => ({ ...p, amount: undefined }));
+                    }}
+                    className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary-400 outline-none bg-white dark:bg-slate-700 dark:text-slate-100 ${errors.amount ? 'border-rose-400' : 'border-slate-200 dark:border-slate-600'}`}
+                    placeholder="0.00"
+                  />
+                  {errors.amount && <p className="text-rose-500 text-xs mt-1">{errors.amount}</p>}
+                </div>
+                <div className="w-1/3">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Currency
+                  </label>
+                  <select
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
+                  >
+                    {CURRENCIES.map((code) => (
+                      <option key={code} value={code}>
+                        {code}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Description
+                </label>
+                <input
+                  type="text"
+                  value={description}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                    setErrors((p) => ({ ...p, description: undefined }));
+                  }}
+                  className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary-400 outline-none bg-white dark:bg-slate-700 dark:text-slate-100 ${errors.description ? 'border-rose-400' : 'border-slate-200 dark:border-slate-600'}`}
+                  placeholder="e.g. Netflix Subscription"
+                />
+                {errors.description && (
+                  <p className="text-rose-500 text-xs mt-1">{errors.description}</p>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Frequency
+                  </label>
+                  <select
+                    value={frequency}
+                    onChange={(e) => setFrequency(e.target.value as RecurringFrequency)}
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
+                  >
+                    {FREQUENCIES.map((freq) => (
+                      <option key={freq.value} value={freq.value}>
+                        {freq.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Account
+                  </label>
+                  <select
+                    value={account}
+                    onChange={(e) => setAccount(e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
+                  >
+                    {PRESET_ACCOUNTS.map((acc) => (
+                      <option key={acc} value={acc}>
+                        {acc}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Category
+                  </label>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
+                  >
+                    {PRESET_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {category === 'Other' && (
+                <div className="animate-in fade-in slide-in-from-top-1 duration-200">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Custom Category
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Gym, Subscriptions..."
+                    value={customCategory}
+                    onChange={(e) => setCustomCategory(e.target.value)}
+                    className="w-full px-4 py-2 border border-primary-200 dark:border-slate-600 bg-primary-50/30 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-primary-400 outline-none"
+                  />
+                </div>
+              )}
+
+              <div className="flex gap-4 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setType('income')}
+                  className={`flex-1 py-2 rounded-xl border-2 transition-all ${type === 'income' ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-slate-100 dark:border-slate-600 text-slate-500 dark:text-slate-400'}`}
+                >
+                  Income
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setType('expense')}
+                  className={`flex-1 py-2 rounded-xl border-2 transition-all ${type === 'expense' ? 'border-rose-500 bg-rose-50 text-rose-700' : 'border-slate-100 dark:border-slate-600 text-slate-500 dark:text-slate-400'}`}
+                >
+                  Expense
+                </button>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-primary-400 text-white py-3 rounded-xl font-bold hover:bg-primary-500 transition-colors mt-4"
               >
-                {FREQUENCIES.map((freq) => (
-                  <option key={freq.value} value={freq.value}>
-                    {freq.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Account
-              </label>
-              <select
-                value={account}
-                onChange={(e) => setAccount(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
-              >
-                {PRESET_ACCOUNTS.map((acc) => (
-                  <option key={acc} value={acc}>
-                    {acc}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Category
-              </label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-primary-400 bg-white dark:bg-slate-700 dark:text-slate-100"
-              >
-                {PRESET_CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {category === 'Other' && (
-            <div className="animate-in fade-in slide-in-from-top-1 duration-200">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Custom Category
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="e.g. Gym, Subscriptions..."
-                value={customCategory}
-                onChange={(e) => setCustomCategory(e.target.value)}
-                className="w-full px-4 py-2 border border-primary-200 dark:border-slate-600 bg-primary-50/30 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-primary-400 outline-none"
-              />
-            </div>
-          )}
-
-          <div className="flex gap-4 mt-2">
-            <button
-              type="button"
-              onClick={() => setType('income')}
-              className={`flex-1 py-2 rounded-xl border-2 transition-all ${type === 'income' ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-slate-100 dark:border-slate-600 text-slate-500 dark:text-slate-400'}`}
-            >
-              Income
-            </button>
-            <button
-              type="button"
-              onClick={() => setType('expense')}
-              className={`flex-1 py-2 rounded-xl border-2 transition-all ${type === 'expense' ? 'border-rose-500 bg-rose-50 text-rose-700' : 'border-slate-100 dark:border-slate-600 text-slate-500 dark:text-slate-400'}`}
-            >
-              Expense
-            </button>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-primary-400 text-white py-3 rounded-xl font-bold hover:bg-primary-500 transition-colors mt-4"
-          >
-            {isEdit ? 'Update Recurring' : 'Save Recurring'}
-          </button>
-        </form>
-      </div>
-    </div>
+                {isEdit ? 'Update Recurring' : 'Save Recurring'}
+              </button>
+            </form>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

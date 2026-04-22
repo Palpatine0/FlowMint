@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { X, UploadCloud, AlertCircle } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import Papa from 'papaparse';
 import type {
   Transaction,
@@ -24,8 +25,6 @@ export function ImportModal({
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  if (!isOpen) return null;
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -159,63 +158,87 @@ export function ImportModal({
     }
   };
 
+  const handleBackdropMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
   return (
-    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md shadow-2xl">
-        <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-700">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Import CSV</h2>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onMouseDown={handleBackdropMouseDown}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 18, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.98 }}
+            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+            onMouseDown={(e) => e.stopPropagation()}
+            className="w-full max-w-md rounded-2xl bg-white shadow-2xl dark:bg-slate-800"
           >
-            <X size={24} />
-          </button>
-        </div>
-
-        <div className="p-6">
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
-            Upload your bank statement as a `.csv` file. We look for columns like{' '}
-            <strong>Date</strong>, <strong>Amount</strong>, and <strong>Description</strong>. Add a{' '}
-            <strong>Frequency</strong> column (daily, weekly, monthly, yearly) to automatically
-            create Recurring Transactions!
-          </p>
-
-          <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-            className={`cursor-pointer border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all ${
-              isDragging
-                ? 'border-primary-400 bg-primary-50 dark:bg-primary-900/20'
-                : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
-          >
-            <UploadCloud
-              size={48}
-              className={`mb-4 ${isDragging ? 'text-primary-500' : 'text-slate-400'}`}
-            />
-            <h3 className="text-base font-semibold text-slate-700 dark:text-slate-200 mb-1">
-              Click or drag file here
-            </h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400">CSV files only (max 5MB)</p>
-          </div>
-          <input
-            type="file"
-            accept=".csv, application/vnd.ms-excel, text/csv"
-            className="hidden"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-          />
-
-          {error && (
-            <div className="mt-4 p-4 bg-rose-50 dark:bg-rose-900/20 rounded-xl flex gap-3 text-rose-600 dark:text-rose-400 text-sm">
-              <AlertCircle size={20} className="shrink-0" />
-              <p>{error}</p>
+            <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-700">
+              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Import CSV</h2>
+              <button
+                onClick={onClose}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <X size={24} />
+              </button>
             </div>
-          )}
-        </div>
-      </div>
-    </div>
+
+            <div className="p-6">
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
+                Upload your bank statement as a `.csv` file. We look for columns like{' '}
+                <strong>Date</strong>, <strong>Amount</strong>, and <strong>Description</strong>.
+                Add a <strong>Frequency</strong> column (daily, weekly, monthly, yearly) to
+                automatically create Recurring Transactions!
+              </p>
+
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                className={`cursor-pointer border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all ${
+                  isDragging
+                    ? 'border-primary-400 bg-primary-50 dark:bg-primary-900/20'
+                    : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <UploadCloud
+                  size={48}
+                  className={`mb-4 ${isDragging ? 'text-primary-500' : 'text-slate-400'}`}
+                />
+                <h3 className="text-base font-semibold text-slate-700 dark:text-slate-200 mb-1">
+                  Click or drag file here
+                </h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  CSV files only (max 5MB)
+                </p>
+              </div>
+              <input
+                type="file"
+                accept=".csv, application/vnd.ms-excel, text/csv"
+                className="hidden"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+              />
+
+              {error && (
+                <div className="mt-4 p-4 bg-rose-50 dark:bg-rose-900/20 rounded-xl flex gap-3 text-rose-600 dark:text-rose-400 text-sm">
+                  <AlertCircle size={20} className="shrink-0" />
+                  <p>{error}</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
