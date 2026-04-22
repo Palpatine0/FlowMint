@@ -10,6 +10,16 @@
   --color-primary-500: #5bb88a;
   --color-primary-600: #47966e;
   --color-primary-700: #366f53;
+  --color-nav-active-ink: #14532d;
+  --color-nav-active-ink-dark: #dcfce9;
+  --color-nav-active-bg-start: #f0fdf6;
+  --color-nav-active-bg-end: #d1fae5;
+  --color-nav-active-bg-start-dark: rgba(22, 101, 52, 0.42);
+  --color-nav-active-bg-end-dark: rgba(20, 83, 45, 0.72);
+  --color-nav-idle-ink: #475569;
+  --color-nav-idle-ink-dark: #94a3b8;
+  --color-nav-idle-hover-bg: rgba(148, 163, 184, 0.2);
+  --color-nav-idle-hover-bg-dark: rgba(51, 65, 85, 0.55);
 }
 
 @layer utilities {
@@ -40,6 +50,71 @@
   .py-safe {
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .nav-item-base {
+    @apply relative rounded-xl transition-colors duration-200;
+    @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500;
+  }
+
+  .nav-item-idle {
+    color: var(--color-nav-idle-ink);
+  }
+  .dark .nav-item-idle {
+    color: var(--color-nav-idle-ink-dark);
+  }
+  .nav-item-idle:hover {
+    background-color: var(--color-nav-idle-hover-bg);
+    color: #0f172a;
+  }
+  .dark .nav-item-idle:hover {
+    background-color: var(--color-nav-idle-hover-bg-dark);
+    color: #f8fafc;
+  }
+  .nav-item-idle:active {
+    background-color: rgba(100, 116, 139, 0.26);
+  }
+  .dark .nav-item-idle:active {
+    background-color: rgba(71, 85, 105, 0.68);
+  }
+
+  .nav-item-active {
+    color: var(--color-nav-active-ink);
+    font-weight: 700;
+  }
+  .dark .nav-item-active {
+    color: var(--color-nav-active-ink-dark);
+  }
+
+  .nav-item-active-bg {
+    background: linear-gradient(
+      135deg,
+      var(--color-nav-active-bg-start),
+      var(--color-nav-active-bg-end)
+    );
+    box-shadow:
+      inset 0 0 0 1px rgba(91, 184, 138, 0.25),
+      0 2px 6px rgba(15, 23, 42, 0.06);
+  }
+  .dark .nav-item-active-bg {
+    background: linear-gradient(
+      135deg,
+      var(--color-nav-active-bg-start-dark),
+      var(--color-nav-active-bg-end-dark)
+    );
+    box-shadow:
+      inset 0 0 0 1px rgba(118, 221, 170, 0.3),
+      0 2px 8px rgba(2, 6, 23, 0.45);
+  }
+
+  .nav-item-rail {
+    @apply rounded-full bg-primary-500 dark:bg-primary-300;
+  }
+
+  .nav-item-badge {
+    @apply inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white;
+    @apply ring-2 ring-white dark:ring-slate-900;
+    background-color: #e11d48;
   }
 }
 

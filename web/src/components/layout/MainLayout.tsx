@@ -82,7 +82,7 @@ export function MainLayout({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={overlayTransition}
-              className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm"
+              className="fixed inset-y-0 right-0 left-64 z-40 bg-slate-900/50 backdrop-blur-sm"
               onClick={() => setMobileNavOpen(false)}
             />
           )}

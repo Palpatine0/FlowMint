@@ -135,19 +135,16 @@ export function Sidebar({
             key={item.label}
             onClick={() => onNavChange(item.label)}
             title={collapsed ? item.label : undefined}
-            className={`relative w-full rounded-xl py-3 transition-all duration-200 ${
+            aria-current={activeNav === item.label ? 'page' : undefined}
+            className={`nav-item-base relative w-full touch-manipulation py-3 active:scale-[0.99] ${
               collapsed ? 'flex items-center justify-center px-2' : 'flex items-center gap-3 px-4'
-            } ${
-              activeNav === item.label
-                ? 'text-primary-500 font-semibold'
-                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50/50 dark:hover:bg-slate-700/50 hover:text-slate-900 dark:hover:text-slate-100'
-            }`}
+            } ${activeNav === item.label ? 'nav-item-active' : 'nav-item-idle'}`}
           >
             {activeNav === item.label && (
               <>
                 <motion.span
                   layoutId="sidebar-active-bg"
-                  className="absolute inset-0 rounded-xl bg-primary-50/80 dark:bg-primary-900/30"
+                  className="nav-item-active-bg absolute inset-0 rounded-xl"
                   transition={
                     shouldReduceMotion
                       ? { duration: 0 }
@@ -157,7 +154,7 @@ export function Sidebar({
                 {!collapsed && (
                   <motion.span
                     layoutId="sidebar-active-rail"
-                    className="absolute left-1 top-2 bottom-2 w-1 rounded-full bg-primary-400 dark:bg-primary-500"
+                    className="nav-item-rail absolute bottom-2 left-1 top-2 w-1"
                     transition={
                       shouldReduceMotion
                         ? { duration: 0 }
@@ -195,7 +192,7 @@ export function Sidebar({
             </AnimatePresence>
             {badges[item.label] ? (
               <span
-                className={`z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white ${collapsed ? 'absolute -top-1 -right-1' : 'ml-auto'}`}
+                className={`nav-item-badge z-10 shrink-0 ${collapsed ? 'absolute -top-1 -right-1' : 'ml-auto'}`}
               >
                 {badges[item.label]}
               </span>
