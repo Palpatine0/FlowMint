@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 
@@ -50,6 +51,7 @@ export function MainLayout({
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const isDesktop = useIsDesktop();
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (isDesktop) setMobileNavOpen(false);
@@ -60,43 +62,81 @@ export function MainLayout({
     if (!isDesktop) setMobileNavOpen(false);
   };
 
+  const mobileDrawerTransition = shouldReduceMotion
+    ? ({ duration: 0 } as const)
+    : ({ type: 'spring', stiffness: 460, damping: 42, mass: 0.75 } as const);
+
+  const overlayTransition = shouldReduceMotion
+    ? ({ duration: 0 } as const)
+    : ({ duration: 0.22, ease: [0.22, 1, 0.36, 1] } as const);
+
   return (
     <div className="flex h-dvh min-h-dvh w-full min-h-0 antialiased text-slate-900 dark:text-slate-100">
-      {!isDesktop && mobileNavOpen && (
-        <button
-          type="button"
-          aria-label="Close menu"
-          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm"
-          onClick={() => setMobileNavOpen(false)}
-        />
+      {!isDesktop && (
+        <AnimatePresence>
+          {mobileNavOpen && (
+            <motion.button
+              type="button"
+              aria-label="Close menu"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={overlayTransition}
+              className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm"
+              onClick={() => setMobileNavOpen(false)}
+            />
+          )}
+        </AnimatePresence>
       )}
-      <div
-        className={[
-          'shrink-0 z-50 transition-transform duration-200 ease-out',
-          isDesktop
-            ? 'relative h-dvh max-h-dvh min-h-dvh translate-x-0'
-            : [
-                'fixed top-0 left-0 box-border flex h-dvh max-h-dvh min-h-0 flex-col py-safe shadow-xl shadow-slate-900/10',
-                mobileNavOpen ? 'translate-x-0' : '-translate-x-full pointer-events-none',
-              ].join(' '),
-        ].join(' ')}
-      >
-        <Sidebar
-          activeNav={activeNav}
-          onNavChange={handleNavChange}
-          onLogout={() => {
-            if (!isDesktop) setMobileNavOpen(false);
-            onLogout();
+
+      {isDesktop ? (
+        <div className="relative z-50 h-dvh max-h-dvh min-h-dvh shrink-0">
+          <Sidebar
+            activeNav={activeNav}
+            onNavChange={handleNavChange}
+            onLogout={() => {
+              if (!isDesktop) setMobileNavOpen(false);
+              onLogout();
+            }}
+            userName={userName}
+            avatarUrl={avatarUrl}
+            badges={badges}
+            collapsed={sidebarCollapsed}
+            onToggleCollapse={() => setSidebarCollapsed((c) => !c)}
+            isMobileDrawer={false}
+            onCloseMobileDrawer={() => setMobileNavOpen(false)}
+          />
+        </div>
+      ) : (
+        <motion.div
+          animate={{
+            x: mobileNavOpen ? 0 : shouldReduceMotion ? 0 : '-100%',
+            opacity: mobileNavOpen ? 1 : shouldReduceMotion ? 0 : 1,
           }}
-          userName={userName}
-          avatarUrl={avatarUrl}
-          badges={badges}
-          collapsed={isDesktop ? sidebarCollapsed : false}
-          onToggleCollapse={isDesktop ? () => setSidebarCollapsed((c) => !c) : undefined}
-          isMobileDrawer={!isDesktop}
-          onCloseMobileDrawer={() => setMobileNavOpen(false)}
-        />
-      </div>
+          transition={mobileDrawerTransition}
+          className={[
+            'fixed top-0 left-0 z-50 box-border flex h-dvh max-h-dvh min-h-0 shrink-0 flex-col py-safe shadow-xl shadow-slate-900/10',
+            mobileNavOpen ? 'pointer-events-auto' : 'pointer-events-none',
+          ].join(' ')}
+          aria-hidden={!mobileNavOpen}
+        >
+          <Sidebar
+            activeNav={activeNav}
+            onNavChange={handleNavChange}
+            onLogout={() => {
+              if (!isDesktop) setMobileNavOpen(false);
+              onLogout();
+            }}
+            userName={userName}
+            avatarUrl={avatarUrl}
+            badges={badges}
+            collapsed={false}
+            isMobileDrawer
+            onCloseMobileDrawer={() => setMobileNavOpen(false)}
+          />
+        </motion.div>
+      )}
+
       <div className="flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden">
         <Header
           activeNav={activeNav}
