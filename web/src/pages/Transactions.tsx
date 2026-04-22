@@ -67,35 +67,43 @@ export function Transactions({ transactions, onDelete, onEdit, dateFormat = 'MM/
       </div>
 
       {/* Summary strip */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl p-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 shrink-0">
+      <div className="grid grid-cols-1 gap-2.5 min-[520px]:grid-cols-3 sm:gap-4">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-slate-100 bg-white p-3.5 dark:border-slate-700 dark:bg-slate-800 sm:gap-3 sm:p-4">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400 sm:h-10 sm:w-10">
             <SlidersHorizontal size={18} />
           </div>
-          <div>
-            <p className="text-xs text-slate-400 dark:text-slate-500">Showing</p>
-            <p className="text-lg font-black text-slate-800 dark:text-slate-100">
+          <div className="min-w-0">
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 sm:text-xs">Showing</p>
+            <p className="truncate text-base font-black text-slate-800 dark:text-slate-100 sm:text-lg">
               {filtered.length}{' '}
-              <span className="text-sm font-normal text-slate-400">transactions</span>
+              <span className="text-xs font-normal text-slate-400 sm:text-sm">transactions</span>
             </p>
           </div>
         </div>
-        <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl p-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-500 shrink-0">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-slate-100 bg-white p-3.5 dark:border-slate-700 dark:bg-slate-800 sm:gap-3 sm:p-4">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-500 dark:bg-emerald-900/30 sm:h-10 sm:w-10">
             <ArrowUpCircle size={18} />
           </div>
-          <div>
-            <p className="text-xs text-slate-400 dark:text-slate-500">Total Income</p>
-            <p className="text-lg font-black text-emerald-600">{fmt(totalIncome)}</p>
+          <div className="min-w-0">
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 sm:text-xs">
+              Total Income
+            </p>
+            <p className="truncate text-base font-black text-emerald-600 sm:text-lg">
+              {fmt(totalIncome)}
+            </p>
           </div>
         </div>
-        <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl p-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center text-rose-500 shrink-0">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-slate-100 bg-white p-3.5 dark:border-slate-700 dark:bg-slate-800 sm:gap-3 sm:p-4">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-500 dark:bg-rose-900/30 sm:h-10 sm:w-10">
             <ArrowDownCircle size={18} />
           </div>
-          <div>
-            <p className="text-xs text-slate-400 dark:text-slate-500">Total Expenses</p>
-            <p className="text-lg font-black text-rose-500">{fmt(totalExpense)}</p>
+          <div className="min-w-0">
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 sm:text-xs">
+              Total Expenses
+            </p>
+            <p className="truncate text-base font-black text-rose-500 sm:text-lg">
+              {fmt(totalExpense)}
+            </p>
           </div>
         </div>
       </div>
