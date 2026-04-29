@@ -44,7 +44,7 @@ import { AddRecurringModal } from './components/ui/AddRecurringModal';
 import { AddGoalModal } from './components/ui/AddGoalModal';
 import { FundGoalModal } from './components/ui/FundGoalModal';
 import { ImportModal } from './components/ui/ImportModal';
-import { ChatWidget } from './components/ui/ChatWidget';
+// import { ChatWidget } from './components/ui/ChatWidget'; // replaced by SmartTicket widget
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -459,7 +459,8 @@ export default function App() {
         goal={fundGoalTarget}
       />
 
-      <ChatWidget profile={profile} transactions={transactions} goals={goals} />
+      {/* <ChatWidget profile={profile} transactions={transactions} goals={goals} /> */}
+      {/* SmartTicket widget is injected via <script> in index.html */}
 
       <Snackbar
         open={toast !== null}
